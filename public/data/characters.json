@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "spriteSize": 32,
+  "directions": [
+    "south",
+    "south-east",
+    "east",
+    "north-east",
+    "north",
+    "north-west",
+    "west",
+    "south-west"
+  ],
+  "characters": [
+    {
+      "id": "celestina",
+      "name": "Селестина",
+      "role": "Паладин, командир отряда «Кинжал»",
+      "sprite": {
+        "basePath": "assets/characters/celestina",
+        "size": [
+          32,
+          32
+        ],
+        "states": {
+          "idle": {
+            "south": "assets/characters/celestina/idle/south.png",
+            "south-east": "assets/characters/celestina/idle/south-east.png",
+            "east": "assets/characters/celestina/idle/east.png",
+            "north-east": "assets/characters/celestina/idle/north-east.png",
+            "north": "assets/characters/celestina/idle/north.png",
+            "north-west": "assets/characters/celestina/idle/north-west.png",
+            "west": "assets/characters/celestina/idle/west.png",
+            "south-west": "assets/characters/celestina/idle/south-west.png"
+          }
+        }
+      },
+      "notes": "Сгенерированный спрайт: молодая воительница-маг Света, русые волосы в пучке, кольчуга, белая накидка с золотым солнцем, пылающий меч."
+    },
+    {
+      "id": "tan",
+      "name": "Тан «Громовая Наковальня»",
+      "role": "Гном-командир хирдманов",
+      "sprite": {
+        "basePath": "assets/characters/tan",
+        "size": [
+          32,
+          32
+        ],
+        "states": {
+          "idle": {
+            "south": "assets/characters/tan/idle/south.png",
+            "south-east": "assets/characters/tan/idle/south-east.png",
+            "east": "assets/characters/tan/idle/east.png",
+            "north-east": "assets/characters/tan/idle/north-east.png",
+            "north": "assets/characters/tan/idle/north.png",
+            "north-west": "assets/characters/tan/idle/north-west.png",
+            "west": "assets/characters/tan/idle/west.png",
+            "south-west": "assets/characters/tan/idle/south-west.png"
+          }
+        }
+      },
+      "notes": "Сгенерированный спрайт: коренастый гном-командир в пластинчатом доспехе, рогатый шлем, седая борода в кольцах, тяжёлый башенный щит."
+    },
+    {
+      "id": "hirdmen-shieldwall",
+      "name": "Хирдманы (щитовая стена)",
+      "role": "Групповой юнит: четверо гномов-хирдманов",
+      "sprite": {
+        "basePath": "assets/characters/hirdmen-shieldwall",
+        "size": [
+          32,
+          32
+        ],
+        "states": {
+          "idle": {
+            "south": "assets/characters/hirdmen-shieldwall/idle/south.png",
+            "south-east": "assets/characters/hirdmen-shieldwall/idle/south-east.png",
+            "east": "assets/characters/hirdmen-shieldwall/idle/east.png",
+            "north-east": "assets/characters/hirdmen-shieldwall/idle/north-east.png",
+            "north": "assets/characters/hirdmen-shieldwall/idle/north.png",
+            "north-west": "assets/characters/hirdmen-shieldwall/idle/north-west.png",
+            "west": "assets/characters/hirdmen-shieldwall/idle/west.png",
+            "south-west": "assets/characters/hirdmen-shieldwall/idle/south-west.png"
+          }
+        }
+      },
+      "notes": "Сгенерированный групповой спрайт: четверо коренастых гномов в щитовой стене. Использовать как один отрядный юнит; для отдельных гвардейцев нужны индивидуальные спрайты."
+    }
+  ]
+}
