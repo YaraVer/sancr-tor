@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-/** Validate that every character in public/data/characters.json has 8 readable 32x32 PNGs. */
+/** Validate that every character in src/data/characters.json has 8 readable 32x32 PNGs. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
-const manifestPath = path.join(projectRoot, 'public', 'data', 'characters.json');
+const manifestPath = path.join(projectRoot, 'src', 'data', 'characters.json');
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
 function pngSize(file) {

@@ -37,11 +37,30 @@ npm run sprites:check
 
 ## Структура
 - `public/data/pss10.json` — опросник PSS-10 и схема подсчёта
+- `src/data/characters.json` — манифест спрайтов (импортируется в код, чтобы загрузка была детерминированной)
 - `src/systems/pssScoring.ts` — подсчёт баллов/субшкал
 - `tests/pssScoring.test.ts` — тесты подсчёта
 - `src/scenes/` — сцены Phaser (каркас)
 - `public/assets/`, `public/data/events/` — ассеты и данные событий (заполняются по ходу разработки)
 - `electron/` — оболочка для локального сохранения данных разработчика (этап 6)
+
+## Публикация (GitHub Pages)
+Сайт собирается и публикуется автоматически при каждом `git push` в `main`
+(workflow: `.github/workflows/deploy.yml`).
+
+Один раз после создания репозитория:
+**GitHub → Settings → Pages → Build and deployment → Source: GitHub Actions.**
+
+Адрес: `https://<username>.github.io/sancr-tor/`
+
+- `base: './'` в `vite.config.ts` — относительные пути, поэтому одна и та же сборка работает и локально, и на Pages-подпути.
+- Workflow сначала запускает `npm test`, потом `npm run build`; упавший тест останавливает деплой.
+- Браузерная версия — статический сайт: PSS-результаты и логи никуда не отправляются.
+
+## Отладочные параметры URL
+- `?scene=SpritePreviewScene` — сразу открыть проверку спрайтов.
+- `?scene=PostGamePSSScene` — каркас пост-игрового опросника.
+- `?debug=1` — открыть доступ к `window.__game` (Phaser) в консоли.
 
 ## Примечания
 - Формулировки пунктов в `public/data/pss10.json` следует сверить с первоисточником (Золотарёва А.А., 2023, русская версия PSS-10) перед исследовательским использованием.

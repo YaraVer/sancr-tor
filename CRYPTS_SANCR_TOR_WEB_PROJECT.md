@@ -344,7 +344,7 @@ crypts-sancr-tor/
 ### 8.5. Пайплайн импорта сгенерированных спрайтов (реализовано в каркасе)
 - **Сырьё:** исходные zip-архивы генератора складываются в `design/source/graphics/` (не участвуют в сборке).
 - **Рантайм:** распакованные PNG — в `public/assets/characters/<character-id>/<state>/<direction>.png` (сейчас: `idle`, 8 направлений, 32×32).
-- **Манифест:** `public/data/characters.json` — единственный источник соответствий «персонаж → файлы → размер». Phaser загружает текстуры по ключам `char:<id>:<state>:<direction>`.
+- **Манифест:** `src/data/characters.json` — единственный источник соответствий «персонаж → файлы → размер». Phaser загружает текстуры по ключам `char:<id>:<state>:<direction>`.
 - **Импорт:** `npm run sprites:import -- --zip "<путь>.zip" --id <id> --name "<Имя>"` — проверяет 8 направлений и размер 32×32, копирует файлы и обновляет манифест.
 - **Проверка:** `npm run sprites:check` + сцена «Проверка спрайтов» (`?scene=SpritePreviewScene`) — визуальный контроль всех направлений при ×2.
 - **Статус:** импортированы `celestina`, `tan`, `hirdmen-shieldwall` (idle, 8 направлений). Портреты, анимации walk/attack/hit и тайлсеты — следующий шаг (см. `design/source/GRAPHICS-TASKS.md`).

@@ -6,9 +6,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Minimal boot: load data/config needed early.
+    // Questionnaire data is loaded at runtime so it can be swapped without a rebuild.
     this.load.json('pss10', 'data/pss10.json');
-    this.load.json('characters', 'data/characters.json');
   }
 
   create(): void {

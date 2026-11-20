@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
-import type { CharacterManifest } from '../systems/spriteManifest';
-import { textureKey } from '../systems/spriteManifest';
+import { characterManifest, textureKey } from '../systems/spriteManifest';
 
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -21,13 +20,10 @@ export class PreloadScene extends Phaser.Scene {
       bar.width = Math.max(8, 312 * value);
     });
 
-    const manifest = this.cache.json.get('characters') as CharacterManifest | undefined;
-    if (manifest) {
-      for (const character of manifest.characters) {
-        for (const [state, frames] of Object.entries(character.sprite.states)) {
-          for (const [direction, path] of Object.entries(frames)) {
-            this.load.image(textureKey(character.id, state, direction), path);
-          }
+    for (const character of characterManifest.characters) {
+      for (const [state, frames] of Object.entries(character.sprite.states)) {
+        for (const [direction, path] of Object.entries(frames)) {
+          this.load.image(textureKey(character.id, state, direction), path);
         }
       }
     }

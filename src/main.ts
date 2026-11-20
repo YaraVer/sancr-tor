@@ -23,7 +23,7 @@ const config: Phaser.Types.Core.GameConfig = {
 
 const game = new Phaser.Game(config);
 
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV || new URLSearchParams(window.location.search).has('debug')) {
   // Debug handle for the browser console; not part of the production API.
   (window as unknown as { __game?: Phaser.Game }).__game = game;
 }

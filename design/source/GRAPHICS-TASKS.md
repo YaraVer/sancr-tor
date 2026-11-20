@@ -30,7 +30,7 @@
 - `hit` — 1–2 кадра;
 - `cast` — 3 кадра (Селестина, Бронн, Пирокар, Зерекс).
 
-Формат: `public/assets/characters/<id>/walk/<direction>/01.png` … `04.png`. После появления анимаций обновить `public/data/characters.json` (добавить state) и `PreloadScene` загрузит их автоматически.
+Формат: `public/assets/characters/<id>/walk/<direction>/01.png` … `04.png`. После появления анимаций обновить `src/data/characters.json` (добавить state) и `PreloadScene` загрузит их автоматически.
 
 ## Приоритет 3 — портреты для диалогов
 Портреты — **отдельная генерация**, не апскейл 32×32:

@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
-import type { CharacterManifest } from '../systems/spriteManifest';
-import { textureKey } from '../systems/spriteManifest';
+import { characterManifest, textureKey } from '../systems/spriteManifest';
 
 /**
  * Техническая сцена проверки графики.
@@ -16,7 +15,7 @@ export class SpritePreviewScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#10151c');
 
-    const manifest = this.cache.json.get('characters') as CharacterManifest | undefined;
+    const manifest = characterManifest;
 
     this.add.text(16, 10, 'Проверка спрайтов', {
       fontFamily: 'Georgia, serif',

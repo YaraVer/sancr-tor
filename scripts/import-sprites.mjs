@@ -75,7 +75,7 @@ function extractZip(zipPath) {
 }
 
 function loadManifest() {
-  const manifestPath = path.join(projectRoot, 'public', 'data', 'characters.json');
+  const manifestPath = path.join(projectRoot, 'src', 'data', 'characters.json');
   return { manifestPath, manifest: JSON.parse(fs.readFileSync(manifestPath, 'utf8')) };
 }
 

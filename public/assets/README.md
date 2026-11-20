@@ -79,12 +79,12 @@ npm run sprites:import -- --dir "C:\path\to\extracted" --id zereks --name "Зе�
 # проверить все спрайты (наличие 8 направлений и размер 32×32)
 npm run sprites:check
 ```
-Скрипт сам скопирует 8 PNG в `public/assets/characters/<id>/idle/`, проверит размер и добавит/обновит запись в `public/data/characters.json`.
+Скрипт сам скопирует 8 PNG в `public/assets/characters/<id>/idle/`, проверит размер и добавит/обновит запись в `src/data/characters.json`.
 
 Вручную:
 1. Сгенерировать/экспортировать 8 PNG по 32×32 с прозрачным фоном.
 2. Положить в `public/assets/characters/<id>/idle/` с именами направлений из списка выше.
-3. Добавить запись в `public/data/characters.json`.
+3. Добавить запись в `src/data/characters.json`.
 4. Перезапустить `npm run dev`. Проверить: титул → «Проверка спрайтов» (или открыть `http://localhost:5173/?scene=SpritePreviewScene`).
 
 ## Правила стиля
