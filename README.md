@@ -51,6 +51,10 @@ npm run sprites:check
 Один раз после создания репозитория:
 **GitHub → Settings → Pages → Build and deployment → Source: GitHub Actions.**
 
+> Пока Pages не включён, workflow падает на шаге `configure-pages` с ошибкой
+> `Resource not accessible by integration` — это ожидаемо. Включите Pages и
+> перезапустите последний run (Actions → Deploy to GitHub Pages → Re-run all jobs).
+
 Адрес: `https://<username>.github.io/sancr-tor/`
 
 - `base: './'` в `vite.config.ts` — относительные пути, поэтому одна и та же сборка работает и локально, и на Pages-подпути.
