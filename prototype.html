@@ -1,0 +1,524 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Крипты Санкр-Тор</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=PT+Sans:wght@400;700&display=swap">
+<style>
+/* Тёмный пиксельный мир: золото = Селестина и тепло, сизый = холод склепа. Раскладка: узкая колонка, сцена 16:9, панели под ней. */
+:root{--bg:#0e1117;--panel:#161b24;--line:#2c3646;--fg:#e6e9ee;--dim:#98a2b3;--gold:#e8c65a;--frost:#9fd0f0;--bad:#d9674f;--ok:#7fd6a2;
+--px:'Press Start 2P',ui-monospace,Consolas,monospace;--tx:'PT Sans',system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--tx);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px}
+#app{max-width:960px;margin:0 auto}
+#top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+#top b{font:12px var(--px);color:var(--gold)} #zone{font:9px var(--px);color:var(--frost);flex:1;min-width:0}
+h1,h2{font:14px/1.6 var(--px);color:var(--gold);margin:0 0 12px;text-wrap:balance}
+h2{font-size:12px}
+.scr{background:var(--panel);border:2px solid var(--line);padding:20px;min-width:0}
+.scr p{max-width:68ch;margin:0 0 12px}
+.dim{color:var(--dim)} .small{font-size:14px}
+button{font:10px/1.5 var(--px);background:#1d2430;color:var(--fg);border:2px solid var(--gold);padding:10px 12px;cursor:pointer;text-align:left;min-width:0}
+button:hover:not(:disabled){background:#2a3344} button:disabled{opacity:.4;cursor:default;border-color:var(--line)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--frost);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+input[type=text]{font:16px var(--px);background:#0b0e14;color:var(--fg);border:2px solid var(--line);padding:10px;width:9em;letter-spacing:.15em;text-transform:none}
+label.chk{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+.err{color:var(--bad);min-height:1.5em}
+.pss{display:grid;gap:10px;margin:12px 0}
+.pi{border:1px solid var(--line);padding:10px;background:#12171f}
+.pi .q{margin:0 0 8px}
+.pi .sc{display:flex;gap:6px;flex-wrap:wrap}
+.pi label{flex:1 1 90px;display:flex;gap:6px;align-items:center;border:1px solid var(--line);padding:6px 8px;cursor:pointer;font-size:14px}
+.pi label:has(input:checked){border-color:var(--gold);background:#2a3344}
+#hud{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;font:9px var(--px);color:var(--dim)}
+.bar{display:flex;gap:6px;align-items:center}.bar i{display:inline-block;width:80px;height:10px;background:#0b0e14;border:1px solid var(--line)}
+.bar i s{display:block;height:100%;text-decoration:none;transition:width .3s}
+#cv{display:block;width:100%;height:auto;aspect-ratio:16/9;image-rendering:pixelated;background:#000;border:2px solid var(--line);touch-action:manipulation}
+#hint{font:9px/1.6 var(--px);color:var(--frost);margin:8px 0;min-height:1.6em}
+#dpad{display:none;gap:6px;margin:8px 0;justify-content:center}
+@media (pointer:coarse){#dpad{display:flex}}
+#dpad button{width:56px;height:44px;text-align:center}
+#dlg{margin-top:10px;display:grid;grid-template-columns:96px 1fr;gap:12px;background:#0f131a;border:2px solid var(--gold);padding:12px;min-width:0}
+#dlg canvas{width:96px;height:96px;image-rendering:pixelated;background:#1d2430;border:2px solid var(--line)}
+#dnm{font:10px var(--px);color:var(--gold);margin-bottom:6px}
+#dtx{white-space:pre-line;min-width:0;font-size:15px}
+#dtx em{color:var(--dim)} #dnote{color:var(--frost);font-size:14px;margin-top:6px;white-space:pre-line}
+#dopt{grid-column:1/-1;display:grid;gap:8px}
+#dopt button{font:13px/1.45 var(--tx);font-weight:400;padding:10px 12px}
+#dopt button b{font:10px var(--px);color:var(--gold);margin-right:8px}
+@media (max-width:520px){#dlg{grid-template-columns:64px 1fr}#dlg canvas{width:64px;height:64px}}
+#bctl{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+#binfo{font-size:14px;color:var(--dim);margin-top:6px;min-height:2.6em}
+#blog{font-size:14px;margin-top:6px;border-top:1px solid var(--line);padding-top:6px;max-height:140px;overflow:auto}
+#blog div{margin:2px 0}.ok{color:var(--ok)}.no{color:var(--bad)}
+#ovl{position:fixed;inset:0;background:rgba(5,7,10,.85);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+#ovl>div{background:var(--panel);border:2px solid var(--gold);padding:20px;max-width:440px}
+textarea{width:100%;min-height:110px;background:#0b0e14;color:var(--fg);border:2px solid var(--line);font:12px ui-monospace,Consolas,monospace;padding:8px}
+.res{display:grid;grid-template-columns:1fr auto auto;gap:4px 16px;max-width:420px;font-variant-numeric:tabular-nums}
+.letter{border:2px solid var(--gold);background:#0f131a;padding:16px;white-space:pre-line;max-width:68ch}
+</style>
+<div id="app">
+<header id="top"><b>Крипты Санкр-Тор</b><span id="zone"></span><button id="pauseBtn" hidden>Пауза / Выйти</button></header>
+<main>
+<section id="s-title" class="scr">
+<h1>Крипты Санкр-Тор</h1>
+<p>Нарративная тактическая сцена по авторской вселенной. Вы ведёте Селестину и отряд «Кинжал» в ледяную усыпальницу некроманта Зерекса. Игра занимает 20–30 минут и состоит из десяти ситуаций, где вы выбираете, как поступить.</p>
+<p><b>Перед началом.</b> В сюжете есть мрачные темы: смерть, потеря, холод души. Это не терапия и не диагностика. Выйти можно в любой момент кнопкой «Пауза / Выйти», объяснять причину не нужно.</p>
+<p class="dim small">Исследовательский прототип. Управление: стрелки или WASD, либо клик по клетке карты. В диалогах: мышь или клавиши 1–4.</p>
+<div class="row"><button id="b-start">Начать</button></div>
+</section>
+<section id="s-consent" class="scr" hidden>
+<h2>Информированное согласие</h2>
+<p>Это исследовательский прототип. Вы пройдёте короткий стандартный опросник (PSS-10), затем игру, затем опросник ещё раз. В ходе игры записываются ваши выборы и время ответа. Имя, почта и другие личные данные не собираются: вы вводите только анонимный код.</p>
+<p>Участие добровольное, выйти можно в любой момент без объяснений. Игра не заменяет разговор с живым человеком.</p>
+<label class="chk"><input type="checkbox" id="c1"><span>Я прочитал(а) описание и согласен(на) участвовать.</span></label>
+<label class="chk"><input type="checkbox" id="c2"><span>Мне есть 18 лет, либо у меня есть разрешение исследователя.</span></label>
+<div class="row"><button id="b-consent" disabled>Продолжить</button></div>
+</section>
+<section id="s-code" class="scr" hidden>
+<h2>Код участника</h2>
+<p>Введите код, который вам выдал исследователь: одна латинская заглавная буква и три цифры, например <b>A017</b>.</p>
+<input type="text" id="code" maxlength="4" autocomplete="off" aria-label="Код участника" placeholder="A017">
+<div class="err" id="code-err" role="alert"></div>
+<div class="row"><button id="b-code">Продолжить</button></div>
+</section>
+<section id="s-pss" class="scr" hidden>
+<h2 id="pss-h">Опросник</h2>
+<p id="pss-ins"></p><div class="pss" id="pss-list"></div>
+<div class="row"><button id="b-pss" disabled>Дальше</button></div>
+</section>
+<section id="s-game" class="scr" hidden>
+<div id="hud"></div>
+<canvas id="cv" width="640" height="360" aria-label="Игровое поле"></canvas>
+<div id="hint"></div>
+<div id="dpad"><button data-d="L">◀</button><button data-d="U">▲</button><button data-d="D">▼</button><button data-d="R">▶</button></div>
+<div id="dlg" hidden><canvas id="pc" width="96" height="96"></canvas><div><div id="dnm"></div><div id="dtx"></div><div id="dnote"></div></div><div id="dopt"></div></div>
+<div id="bctl" hidden></div><div id="binfo"></div><div id="blog" hidden></div>
+</section>
+<section id="s-close" class="scr" hidden></section>
+</main>
+<div id="ovl" hidden><div><h2>Пауза</h2><p>Можно продолжить или выйти. Причину называть не нужно.</p><div class="row"><button id="o-go">Продолжить</button><button id="o-quit">Выйти</button></div></div></div>
+</div>
+<script>
+"use strict";
+/* ===== ДАННЫЕ ===== */
+const PSS_ITEMS=["расстраивались из-за того, что происходило неожиданно?","чувствовали, что не способны контролировать важные моменты своей жизни?","нервничали и испытывали стресс?","чувствовали уверенность в своей способности справляться с личными проблемами?","чувствовали, что всё идёт так, как это нужно Вам?","обнаруживали, что не можете справиться со всем, что Вам приходилось делать?","могли контролировать свою раздражительность?","чувствовали, что находитесь на вершине успеха?","злились из-за того, что происходило без контроля с Вашей стороны?","чувствовали, что Вам не преодолеть всех скопившихся трудностей?"];
+const PSS_REV=[4,5,7,8], PSS_DIS=[1,2,3,6,9,10], PSS_COP=[4,5,7,8];
+const PSS_SCALE=["никогда","почти никогда","иногда","часто","очень часто"];
+const PSS_INS="Оцените, пожалуйста, как часто в течение прошедшего месяца Вы испытывали те или иные мысли и чувства. «В течение прошедшего месяца как часто Вы…»";
+function pssScore(a){ // a: массив из 10 ответов 0–4
+  const v=i=>PSS_REV.includes(i)?4-a[i-1]:a[i-1];
+  const sum=l=>l.reduce((s,i)=>s+v(i),0);
+  return {total:sum([1,2,3,4,5,6,7,8,9,10]),distress:PSS_DIS.reduce((s,i)=>s+a[i-1],0),coping:PSS_COP.reduce((s,i)=>s+a[i-1],0)};
+}
+const NAMES={sel:"Селестина",tan:"Тан",bro:"Бронн",pir:"Пирокар",lar:"Ларс",gua:"Гвардия",hel:"Хельга",hir:"Стена хирдов",zer:"Зерекс",nar:"Рассказчик"};
+const SPEAK={E1:"sel",E2:"nar",E3:"nar",E4:"sel",E5:"sel",E6:"lar",E7:"sel",E8:"sel",E9:"zer",E10:"nar"};
+const EP={
+E1:{item:4,factor:"coping",title:"Зачем?",text:"Ветер стих на миг, как стихают перед ответом, который не хочется слышать. Селестина остановилась там, где колея, залитая серой водой, расходилась надвое: одна вела к ледяной усыпальнице, другая — назад, к бане и дымку человеческого тепла. «Что я скажу, если спросят — на что ты рассчитывала?» — пронеслось в её голове, и ответ не приходил так долго, что Тан за её спиной кашлянул в бороду.",
+ opts:[{k:"A",tag:"C",t:"«Я помню, сколько раз огонь в моих руках гас — и сколько раз возвращался. Не потому, что я его заслужила. Потому что я не отпускала рукоять» — и пальцы сомкнулись на эфесе.",fx:{faith:1}},
+ {k:"B",tag:"G",t:"«Не знаю. Ответ придёт позже, если придёт вообще. Сейчас у меня есть ноги, дорога и меч.»",fx:{unity:1}},
+ {k:"C",tag:"D",t:"«Он прав, тот голос: нас слишком мало, а я одна. Повернуть бы назад…» — и шаг вперёд она сделала лишь потому, что остановиться было страшнее.",fx:{faith:-1},flag:"cautious"}]},
+E2:{item:3,factor:"distress",title:"Ворота: тишина",text:"Он видел их. Он не торопился — как не торопится паук, у которого нет причин спешить. Дождь стекал по трём каменным коронам над воротами; Солнце, вырезанное между ними, давно истёрлось до пятна. Тишина тянулась, и в ней у каждого нашлась своя тревога: Пирокар поправлял прожжённый рукав, Ларс слишком часто проверял спуск арбалета, а гвардейцы перехватывали древки так, будто те были единственным, что удерживало их на земле.",
+ opts:[{k:"A",tag:"D",t:"«Хватит ждать. Хочет, чтобы мы мучились тишиной, — разобьём её.» Штурм ворот.",fx:{frost:1,unity:-1},flag:"assault"},
+ {k:"B",tag:"C",t:"Попросить Бронна о короткой молитве: ментоловый свет посоха по рядам; всем — вдох, счёт, и только потом шаг.",fx:{faith:1,frost:1}},
+ {k:"C",tag:"G",t:"Послать Ларса за лазейкой: тише и умнее, но Зерекс узнаёт состав отряда.",fx:{frost:1},flag:"scouted"}]},
+E3:{item:1,factor:"distress",title:"Кости встают",text:"Зерекс поднял руку. И кости в нишах по стенам зашевелились, начали складываться в жуткие пародии на воинов — слишком быстро, слишком слаженно, как будто ждали этого приказа дольше, чем вся их неживая жизнь. «Он не мог начать так. Это не его манера: он выходит из-за завесы, а не из стен» — но стены уже шли на них. Над котлом вздулся зелёный пар, и Бледные Стражи развернулись с мертвенной плавностью.",
+ opts:[{k:"A",tag:"D",t:"Замереть, сверяя случившееся с тем, что должно было быть: «Так не бывает.»",fx:{unity:-1},flag:"lostFirst",deed:"на миг замерла, сверяя случившееся с тем, что должно было быть"},
+ {k:"B",tag:"C",t:"Принять, что план сломан, и сразу назвать новую задачу: «Тан — стена. Гвардия — фланги. Работаем с тем, что есть.»",fx:{},flag:"bonusFirst",deed:"приняла, что план сломан, и сразу назвала новую задачу"},
+ {k:"C",tag:"G",t:"Обругать врага вслух (Ларс подхватывает шуткой): смех сбрасывает напряжение, но строй на миг теряет собранность.",fx:{unity:1},flag:"looseFirst",deed:"выругалась вслух, и смех на миг сбросил напряжение"}]},
+E4:{item:6,factor:"distress",title:"Всё сразу",text:"«Стражи — или пар? Кости — или Тан, которому не удержать стену? Не может быть, чтобы всё одновременно». Но было именно одновременно. Селестина услышала собственный голос, перекрывающий звон стали: она раздавала приказы так быстро, будто могла быть сразу на трёх участках.",
+ opts:[{k:"A",tag:"D",t:"Отдать три приказа за один ход и пытаться поспеть за всеми: «Дирижёр». Проверка Харизмы, СЛ 18.",fx:{},deed:"пыталась командовать сразу на трёх участках"},
+ {k:"B",tag:"C",t:"Назвать главную цель (Страж), остальным — «держаться» и принять потери на втором фронте.",fx:{},deed:"назвала главную цель и приняла потери на втором фронте"},
+ {k:"C",tag:"G",t:"Отступить в стену хирдов и ждать, пока натиск спадёт.",fx:{frost:2},deed:"отступила в стену хирдов и переждала натиск"}]},
+E5:{item:8,factor:"coping",title:"Страж пал",text:"Страж рассыпался инеем, и на мгновение зал вспыхнул — не её мечом, а чем-то большим, что росло из самого строя: Тан опустил молот, Пирокар опустил руки, Ларс опёрся на алебарду с видом человека, выигравшего спор, который никто не помнил. Зерекс на миг дрогнул: лицо-маска впервые выдало что-то похожее на шок. «Мы сделали это». И сразу следом — другое: «А что, если это ничего не значит».",
+ opts:[{k:"A",tag:"D",t:"Отмахнуться: «Рано радоваться, он только этого и ждал» — и гнать отряд дальше, не дав выдохнуть.",fx:{frost:1,unity:-1},deed:"не дала отряду выдохнуть после победы"},
+ {k:"B",tag:"C",t:"Дать минуту: перевязать раненых, вслух назвать, что сделано, и только потом идти.",fx:{frost:1,faith:1,unity:1},deed:"дала отряду минуту после победы"},
+ {k:"C",tag:"G",t:"«Он слаб, берём его сейчас!» — рвануть вслед на волне успеха.",fx:{faith:-1},flag:"surge",deed:"рванула вслед за врагом на волне успеха"}]},
+E6:{item:5,factor:"coping",title:"«Лёд» под ногами",text:"Коридор, выбитый в сизой толще склона, принял их тишиной — той особой послепобедной тишиной, в которой так хочется поверить, что самое трудное осталось за спиной. Всё шло так, как было задумано, и дорога лежала впереди — ровная, чистая, будто её вымели к их приходу. Слишком ровная. Плиты блестели влажным, льдистым блеском, не тронутые ни сколом, ни трещиной. «Лёд не лежит так ровно в склепе, где столетиями сочится вода». Ларс опустился на колено, коснулся плиты концом алебарды и вполголоса выругался: между плитами тянулись тонкие медные жилки, а в швах слабо пахло миндалём. План, что держал их до этой минуты, об этом полу не знал ничего.",
+ opts:[{k:"A",tag:"D",t:"«Прорываемся бегом! Он только этого и ждёт — значит, надо быстрее.»",fx:{frost:2},flag:"poison"},
+ {k:"B",tag:"C",t:"Принять, что план не знал про этот пол; Ларс ведёт отряд вдоль стены по двум безопасным полосам шириной в фут.",fx:{frost:1},flag:"lane"},
+ {k:"C",tag:"G",t:"Разделить: Ларс и гвардейцы по стенам, Тан и хирды — искать обход. Быстро, но отряд распадается на две части.",fx:{frost:1},flag:"tanCut"}]},
+E7:{item:7,factor:"coping",title:"В ногу",text:"Волшебные стрелы вынырнули из темноты и впились в плечо Пирокара — туда, где бледнела ссадина от яда. Позади, у стены, тяжёлый Тан молча измерял глазами ширину карниза; ширина не менялась. Что-то горячее и совсем не священное поднялось к горлу Селестины. «Каждая минута — на их руку. А я должна ещё и ждать».",
+ opts:[{k:"A",tag:"D",t:"«Тот, кто не может идти в ногу, останется.» Резкий приказ идти без отстающих.",fx:{unity:-2},flag:"gormDead",deed:"приказала идти без отстающих"},
+ {k:"B",tag:"C",t:"Вдох. Назвать вещи своими именами: «Тан идёт обходом, Пирокар — под прикрытием Бронна. Мы встречаемся у пропасти.»",fx:{unity:1,frost:2},deed:"вдохнула и назвала вещи своими именами"},
+ {k:"C",tag:"G",t:"Передать темп Ларсу, сама держать тыл молча.",fx:{},flag:"trustDebt",deed:"передала темп Ларсу и молча держала тыл"}]},
+E8:{item:9,factor:"distress",title:"Пропасть",text:"Они не увидели пропасть — они услышали её. Вой ветра пришёл снизу раньше, чем ушла из-под ноги земля.",
+ opts:[{k:"A",tag:"D",t:"Кинуться через пропасть за Зерексом, не оглядываясь: «Я достану его хоть из-под земли.»",fx:{faith:-1,unity:-1},flag:"hurt",deed:"бросилась за Зерексом, не оглянувшись"},
+ {k:"B",tag:"C",t:"Назвать погибшего по имени вслух и дать Бронну (когда подойдёт) отпустить его светом; и продолжить.",fx:{faith:-1,unity:2},deed:"назвала потерю по имени вслух"},
+ {k:"C",tag:"G",t:"Отвернуться и вести бой как механизм, не думая о Горме.",fx:{},flag:"turnedAway",deed:"отвернулась и вела бой как механизм"}]},
+E9:{item:2,factor:"distress",title:"Последняя команда",text:"Тьма легла на запястья мягко, как сырой шёлк, и вдруг стало нечем сжимать эфес. «Я не вижу, куда ставить ногу. Не слышу, что они кричат. Я не могу даже приказать». И сверху, будничным голосом: «Командир? Последняя команда?»",
+ opts:[{k:"A",tag:"D",t:"Кричать приказы Ларсу и Арну по одному шагу, не отпуская ни одного движения.",fx:{unity:-1,frost:1},deed:"командовала каждым шагом"},
+ {k:"B",tag:"C",t:"Назвать каждого по имени и дать каждому одну задачу, а дальше — довериться.",fx:{unity:1},deed:"назвала каждого по имени и доверилась им"},
+ {k:"C",tag:"G",t:"Держаться и ждать: «Стоять, где стоите.»",fx:{frost:1},deed:"велела держаться там, где стоят"}]},
+E10:{item:10,factor:"distress",title:"Ноша",text:"Они стояли у двери, и усыпальница будто подсчитывала их: Тан с трещиной в щите, Бронн с посохом, потускневшим от молитв, гвардейцы, из которых целы были немногие; Пирокар, у которого не хватало даже слов. «Всё это нужно пронести ещё один раз. Всё это — на одних плечах. Нет такой силы, чтобы…» — и она не договорила: договаривать было нечем.",
+ opts:[{k:"A",tag:"D",t:"«Нам не осилить. Отходим, пока можем.»",fx:{},flag:"falseExit"},
+ {k:"B",tag:"C",t:"Разбить задачу: «Не вся усыпальница. Один шаг. Потом ещё.» Каждый называет, что ещё может нести.",fx:{unity:1,faith:1}},
+ {k:"C",tag:"G",t:"Принять жертву: Пирокар сжигает весь запас огня за один удар.",fx:{},flag:"pirSacrifice"}]}
+};
+const ENDINGS={
+ thaw:{name:"Оттепель",txt:"Зерекс в плену. Тан и Бронн выходят из усыпальницы, речка за камнями идёт ряской. Отряд возвращается к бане: тепло там — не обещание, а факт. Дверь не открыта, и это честная нота продолжения."},
+ grey:{name:"Серая вода",txt:"Зерекс в плену, Горм остаётся в пропасти. Победа есть, спокойствия нет: «Покажет время»."},
+ frost:{name:"Иней",txt:"Зерекс в плену, но холод остался внутри: отряд молча идёт обратно, в бане никто не говорит. Арн и Горм не вернулись. Это не наказание, а картина того, что осталось."}};
+const FINAL_CH=[["Допросить сейчас, пока он оглушён.","interrogate"],["Удержать живым: Бронн исцеляет, чтобы Зерекс дожил до допроса в Легионе.","keep_alive"],["Положить меч обратно в ножны и просто дождаться, пока он заговорит сам.","wait"]];
+const FINAL_LINE={interrogate:"Ты решила спросить сразу, пока он не пришёл в себя.",keep_alive:"Ты велела удержать его живым до допроса в Легионе.",wait:"Ты вложила меч в ножны и стала ждать, пока он заговорит сам."};
+/* ===== ЯДРО: состояние, лог, броски, диалог, оболочка ===== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const rnd=n=>1+Math.floor(Math.random()*n);
+const uid=()=>{try{return crypto.randomUUID()}catch(e){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>(Math.random()*16|0).toString(16))}};
+const S={session:uid(),code:"",log:[],res:{faith:3,unity:3,frost:0},flags:{},tags:{},pre:null,post:null,aborted:false,viewed:false,ending:null,finalChoice:null,losses:[]};
+const LIM={faith:[0,6],unity:[0,6],frost:[0,10]};
+const AUTO=()=>window.__auto;
+function addLog(event,x){S.log.push(Object.assign({session:S.session,participant:S.code,ts:new Date().toISOString(),event},x||{}))}
+function fx(o){for(const k in(o||{})){const[a,b]=LIM[k];S.res[k]=Math.max(a,Math.min(b,S.res[k]+o[k]))}drawHud()}
+function drawHud(){const bar=(n,k,c)=>`<span class="bar">${n}<i><s style="width:${S.res[k]/LIM[k][1]*100}%;background:${c}"></s></i></span>`;
+ $("#hud").innerHTML=bar("Вера","faith","#e8c65a")+bar("Сплочённость","unity","#7fd6a2")+bar("Холод","frost","#9fd0f0")}
+function show(id){$$("main>section").forEach(s=>s.hidden=s.id!==id);$("#pauseBtn").hidden=!(id==="s-game"||id==="s-pss");window.scrollTo(0,0)}
+/* --- броски --- */
+function note(text,cls){const dn=$("#dnote");if(!$("#dlg").hidden){dn.innerHTML+=(dn.innerHTML?"\n":"")+`<span class="${cls||""}">${text}</span>`}else blog(text,cls)}
+function blog(t,cls){const b=$("#blog");b.hidden=false;const d=document.createElement("div");if(cls)d.className=cls;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight}
+let ROLLS=[];const flushRolls=()=>{const t=ROLLS.join("\n");ROLLS=[];return t};
+function check(o){ // o:{ep,label,mod,dc,why,adv,dis}
+ const a=rnd(20),b=(o.adv||o.dis)?rnd(20):null;const r=o.adv?Math.max(a,b):o.dis?Math.min(a,b):a;
+ const total=r+o.mod, ok=total>=o.dc;
+ const msg=`${o.label}: d20${b!==null?` (${a}, ${b}, ${o.adv?"лучший":"худший"})`:""} = ${r}${o.mod>=0?"+":""}${o.mod} = ${total} против СЛ ${o.dc}. ${o.why} ${ok?"Успех.":"Провал."}`;ROLLS.push(msg);
+ addLog("roll",{episode:o.ep||null,label:o.label,die:r,mod:o.mod,dc:o.dc,success:ok,adv:!!o.adv,dis:!!o.dis});return ok}
+function random100(ep,label){const v=rnd(100);addLog("random_event",{episode:ep,label,d100:v});return v}
+/* --- диалог --- */
+let optHandler=null;
+document.addEventListener("keydown",e=>{if(optHandler&&/^[1-4]$/.test(e.key))optHandler(+e.key-1)});
+function dialogue(o){ // o:{sp,title,text,note,opts:[{k,t}]|null,more:"Дальше"}
+ return new Promise(res=>{
+  const dlg=$("#dlg");dlg.hidden=false;$("#dnm").textContent=(NAMES[o.sp]||"")+(o.title?" · "+o.title:"");
+  $("#dnote").textContent=o.note||"";$("#dopt").innerHTML="";drawPortrait(o.sp);
+  const tx=$("#dtx"),full=o.text;tx.textContent="";let i=0,done=false;
+  const opts=o.opts||[{k:"·",t:o.more||"Дальше"}];
+  const finish=()=>{if(done)return;done=true;clearInterval(tm);tx.textContent=full;const t0=performance.now();
+   $("#dopt").innerHTML="";opts.forEach((p,n)=>{const b=document.createElement("button");b.innerHTML=`<b>${o.opts?n+1:"▶"}</b>${p.t}`;b.onclick=()=>pick(n);$("#dopt").appendChild(b)});
+   optHandler=n=>{if(n<opts.length)pick(n)};
+   function pick(n){optHandler=null;res({i:n,latency:Math.round(performance.now()-t0)})}
+   if(AUTO()){const n=AUTO().pick(o,opts);setTimeout(()=>pick(n),0)}};
+  const tm=setInterval(()=>{i+=3;if(i>=full.length)finish();else tx.textContent=full.slice(0,i)},AUTO()?0:16);
+  tx.onclick=finish;if(AUTO())finish();
+ })}
+function hideDlg(){$("#dlg").hidden=true;optHandler=null}
+/* --- эпизод --- */
+async function episode(id,over){
+ const E=EP[id],o=Object.assign({},E,over||{});
+ const r=await dialogue({sp:SPEAK[id],title:E.title,text:o.text,note:o.note,opts:o.opts});
+ const p=o.opts[r.i];let extra=p.fx;if(o.adj&&o.adj[p.k])extra=Object.assign({},p.fx,o.adj[p.k]);
+ fx(extra);if(p.flag)S.flags[p.flag]=true;S.tags[id]=p.tag;S.choices=S.choices||{};S.choices[id]=p;
+ addLog("choice",{episode:id,pss_item:E.item,factor:E.factor,option:p.k,tag:p.tag,latency_ms:r.latency,state:Object.assign({},S.res)});
+ return {p,r}}
+/* --- оболочка --- */
+const normCode=s=>{const m={"А":"A","В":"B","Е":"E","К":"K","М":"M","Н":"H","О":"O","Р":"P","С":"C","Т":"T","Х":"X"};return s.trim().split("").map(c=>m[c]||c).join("")};
+const validCode=s=>/^[A-Z][0-9]{3}$/.test(s);
+function buildPss(which){
+ $("#pss-h").textContent=which==="pre"?"Опросник до игры":"Опросник после игры";$("#pss-ins").textContent=PSS_INS;
+ const L=$("#pss-list");L.innerHTML="";const ans=Array(10).fill(null);
+ PSS_ITEMS.forEach((q,i)=>{const d=document.createElement("div");d.className="pi";
+  d.innerHTML=`<p class="q">${i+1}. …${q}</p><div class="sc">`+PSS_SCALE.map((s,v)=>`<label><input type="radio" name="p${i}" value="${v}"> ${v} · ${s}</label>`).join("")+"</div>";
+  d.querySelectorAll("input").forEach(r=>r.onchange=()=>{ans[i]=+r.value;$("#b-pss").disabled=ans.some(a=>a===null)});L.appendChild(d)});
+ $("#b-pss").disabled=true;show("s-pss");
+ return new Promise(res=>{$("#b-pss").onclick=()=>{const sc=pssScore(ans);S[which]={answers:ans.slice(),...sc};
+  addLog(which==="pre"?"pss_pre":"pss_post",{answers:ans.slice(),total:sc.total,distress:sc.distress,coping:sc.coping});res()}})}
+function interp(){return "Шкала от 0 до 40: чем выше балл, тем сильнее напряжение. Границы условные и не являются диагнозом."}
+function closing(){
+ show("s-close");const c=$("#s-close");
+ c.innerHTML=`<h1>Спасибо, что прошли игру</h1><p>${S.aborted?"Вы вышли из игры. Данные помечены как прерванные.":"Это конец сцены. Дверь осталась запечатанной, и это задел на продолжение."}</p>
+ <p>Игра не заменяет разговор с живым человеком. Если в последнее время вам тяжело, поговорите с близкими или обратитесь к психологу. Контакты службы поддержки укажет исследователь.</p>
+ <div class="row"><button id="c-res"${S.pre&&S.post?"":" disabled"}>Показать мои результаты по PSS-10</button><button id="c-exp">Данные сессии (экспорт)</button><button id="c-again">Пройти заново</button></div><div id="c-out"></div>`;
+ $("#c-res").onclick=()=>{S.viewed=true;addLog("results_viewed");const a=S.pre,b=S.post;
+  $("#c-out").innerHTML=`<h2 style="margin-top:20px">Ваши результаты</h2><div class="res"><b></b><b>До</b><b>После</b><span>Общий балл (0–40)</span><span>${a.total}</span><span>${b.total}</span><span>Дистресс</span><span>${a.distress}</span><span>${b.distress}</span><span>Совладание</span><span>${a.coping}</span><span>${b.coping}</span></div><p class="small dim" style="margin-top:10px">${interp()} Игра не заменяет разговор с живым человеком.</p>`};
+ $("#c-exp").onclick=()=>{$("#c-out").innerHTML=`<h2 style="margin-top:20px">Данные сессии</h2><p class="small dim">Скопируйте текст и передайте исследователю. Персональных данных здесь нет: только код, выборы и ответы опросников.</p><p><b>JSONL</b></p><textarea id="x1" readonly></textarea><div class="row"><button id="k1">Копировать JSONL</button></div><p><b>CSV</b></p><textarea id="x2" readonly></textarea><div class="row"><button id="k2">Копировать CSV</button></div>`;
+  $("#x1").value=toJSONL();$("#x2").value=toCSV();
+  [["k1","x1"],["k2","x2"]].forEach(([b,t])=>$("#"+b).onclick=()=>{const el=$("#"+t);el.select();try{navigator.clipboard.writeText(el.value).catch(()=>{})}catch(e){}})};
+ $("#c-again").onclick=()=>location.reload()}
+const toJSONL=()=>S.log.map(r=>JSON.stringify(r)).join("\n");
+function toCSV(){const cols=["session","participant","ts","event","episode","pss_item","factor","option","tag","latency_ms","faith","unity","frost","detail"];
+ const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+ return [cols.join(",")].concat(S.log.map(r=>{const st=r.state||{};const rest=Object.assign({},r);cols.forEach(c=>delete rest[c]);delete rest.state;
+  return cols.map(c=>c==="faith"||c==="unity"||c==="frost"?q(st[c]):c==="detail"?q(Object.keys(rest).length?JSON.stringify(rest):""):q(r[c])).join(",")})).join("\n")}
+function quit(){S.aborted=true;addLog("session_end",{aborted:true});window.__stop=true;hideDlg();closing()}
+$("#pauseBtn").onclick=()=>{$("#ovl").hidden=false};$("#o-go").onclick=()=>{$("#ovl").hidden=true};
+$("#o-quit").onclick=()=>{$("#ovl").hidden=true;quit()};
+$("#b-start").onclick=()=>show("s-consent");
+const cc=()=>$("#b-consent").disabled=!($("#c1").checked&&$("#c2").checked);$("#c1").onchange=$("#c2").onchange=cc;
+$("#b-consent").onclick=()=>show("s-code");
+$("#b-code").onclick=async()=>{const v=normCode($("#code").value);
+ if(!validCode(v)){$("#code-err").textContent="Код должен быть из одной заглавной латинской буквы и трёх цифр, например A017.";return}
+ S.code=v;addLog("session_start",{ua:"web-prototype"});await buildPss("pre");await playGame();if(window.__stop)return;await buildPss("post");addLog("session_end",{aborted:false,ending:S.ending,iir:S.iir});closing()};
+/* ===== ГРАФИКА И ИССЛЕДОВАНИЕ ===== */
+const cv=$("#cv"),cx=cv.getContext("2d");cx.imageSmoothingEnabled=false;
+const pc=$("#pc").getContext("2d");pc.imageSmoothingEnabled=false;
+const G={mode:"map",zone:0,x:2,y:8,trail:[],target:null,locked:false,grid:null,path:[],tick:0,banner:null,battle:null};
+const R=(c,col,s,x,y,w,h)=>{c.fillStyle=col;c.fillRect(Math.round(x*s),Math.round(y*s),Math.ceil(w*s),Math.ceil(h*s))};
+const hash=(x,y)=>{let h=(x*374761393+y*668265263)^0x5bd1e995;h=(h^(h>>>13))*1274126177;return((h^(h>>>16))>>>0)%100};
+const PAL={sel:{hair:"#c8a46a",skin:"#e8c9a0",arm:"#8d97a6",cape:"#e8c65a"},tan:{hair:"#8a5a3a",skin:"#d9b08a",arm:"#6b7480",cape:"#4a525c"},bro:{hair:"#cfd5de",skin:"#e8c9a0",arm:"#e6e9ee",cape:"#cfe3f0"},pir:{hair:"#7a3a22",skin:"#e0b894",arm:"#b8532e",cape:"#e8c65a"},lar:{hair:"#3a2e22",skin:"#d9b08a",arm:"#7a6a4a",cape:"#5a4a32"},gua:{hair:"#3a3a3a",skin:"#d9b08a",arm:"#8d97a6",cape:"#4a6f8a"},hel:{hair:"#b0a070",skin:"#e0b894",arm:"#5a4a7a",cape:"#8a6fb0"},hir:{hair:"#8a5a3a",skin:"#d9b08a",arm:"#6b7480",cape:"#4a525c"},zer:{hair:"#1b1620",skin:"#d9d2b8",arm:"#2a1f2e",cape:"#14161c"},nar:{hair:"#3a4455",skin:"#98a2b3",arm:"#3a4455",cape:"#2c3646"}};
+function sprite(c,kind,x,y,s,o){o=o||{};const p=PAL[kind]||PAL.nar;const dy=(kind==="tan"||kind==="hir")?3:0;
+ if(kind==="str"||kind==="ske"||kind==="sha"){return mob(c,kind,x,y,s,o)}
+ c.save();c.translate(x,y+dy*s);R(c,"rgba(0,0,0,.25)",s,8,29,16,3);
+ R(c,p.arm,s,11,25,4,5);R(c,p.arm,s,17,25,4,5);R(c,p.cape,s,7,14,3,11);R(c,p.cape,s,22,14,3,11);
+ R(c,p.arm,s,9,14,14,12);R(c,p.cape,s,12,15,8,3);
+ R(c,p.skin,s,11,4,10,10);R(c,p.hair,s,10,3,12,4);R(c,p.hair,s,10,3,2,8);R(c,p.hair,s,20,3,2,8);
+ R(c,"#222",s,13,8,2,2);R(c,"#222",s,18,8,2,2);
+ if(kind==="sel"){R(c,"#e8c65a",s,25,6,2,9);R(c,"#fff3b0",s,25,2,2,5);R(c,"#e8c65a",s,23,15,6,2);R(c,p.hair,s,19,1,4,4)}
+ if(kind==="tan"||kind==="hir"){R(c,"#cfd5de",s,10,1,12,4);if(kind==="tan"){R(c,"#e6e0cc",s,8,0,3,4);R(c,"#e6e0cc",s,21,0,3,4)}R(c,p.hair,s,11,11,10,6);R(c,"#9fa8b5",s,25,12,5,9)}
+ if(kind==="bro"){R(c,"#e6e9ee",s,9,22,14,8);R(c,"#8a6a3a",s,26,6,2,22);R(c,"#9fd0f0",s,24,2,6,5)}
+ if(kind==="pir"){R(c,"#b8532e",s,10,0,12,4);R(c,"#b8532e",s,13,-3,6,4);R(c,"#e8c65a",s,9,22,14,2);R(c,"#ff9a3c",s,25,6,4,4)}
+ if(kind==="lar"){R(c,"#2a2f38",s,22,16,9,3);R(c,"#8a6a3a",s,26,13,2,8)}
+ if(kind==="gua"){R(c,"#8d97a6",s,10,1,12,5);R(c,"#8a6a3a",s,26,0,2,28);R(c,"#cfd5de",s,25,-3,4,4)}
+ if(kind==="hel"){R(c,"#8a6fb0",s,12,6,3,1);R(c,"#6b7480",s,25,8,6,3);R(c,"#8a6fb0",s,27,3,2,10)}
+ if(kind==="zer"){R(c,"#6b3a3a",s,22,18,3,3);R(c,"#14161c",s,10,1,12,3);R(c,"#e6e0cc",s,13,6,2,3);R(c,"#e6e0cc",s,18,6,2,3);R(c,"#5a2a3a",s,24,10,2,16)}
+ if(o.hurt)R(c,"rgba(217,103,79,.35)",s,6,0,20,30);
+ c.restore()}
+function mob(c,kind,x,y,s,o){c.save();c.translate(x,y);R(c,"rgba(0,0,0,.25)",s,8,29,16,3);
+ if(kind==="ske"){R(c,"#e6e0cc",s,11,4,10,9);R(c,"#14161c",s,13,7,2,3);R(c,"#14161c",s,18,7,2,3);R(c,"#e6e0cc",s,13,14,6,10);R(c,"#14161c",s,12,17,8,1);R(c,"#e6e0cc",s,11,24,3,6);R(c,"#e6e0cc",s,18,24,3,6);R(c,"#9fa8b5",s,24,8,2,16)}
+ if(kind==="str"){R(c,"#9fd0f0",s,8,3,16,26);R(c,"#6b95b5",s,10,5,12,12);R(c,"#14161c",s,11,8,10,5);R(c,"#6fb4ff",s,12,9,3,3);R(c,"#6fb4ff",s,18,9,3,3);R(c,"#e6f3ff",s,6,16,3,10);R(c,"#e6f3ff",s,23,16,3,10)}
+ if(kind==="sha"){c.globalAlpha=.8;R(c,"#3b4a66",s,9,6,14,22);R(c,"#2a3350",s,7,16,18,10);R(c,"#9fd0f0",s,12,10,3,3);R(c,"#9fd0f0",s,18,10,3,3);c.globalAlpha=1}
+ if(o.hurt)R(c,"rgba(217,103,79,.35)",s,6,0,20,30);c.restore()}
+function drawPortrait(sp){pc.clearRect(0,0,96,96);pc.fillStyle="#1d2430";pc.fillRect(0,0,96,96);if(sp==="nar"){pc.fillStyle="#9fd0f0";pc.font="40px serif";pc.fillText("❄",26,62);return}sprite(pc,sp,0,2,3)}
+/* --- зоны --- */
+const ZONES=[
+{name:"I · Подступы",start:[2,8],map:["####################","#..................#","#.##...~~~~...###..#","#.#....~~~~....#...#","#......~bb~........#","#..................#","#....#.......##....#","#....#...........#.#","#..................#","####################"],pal:{f1:"#4a525c",f2:"#454d57",w:"#1f2a27",w2:"#2a3a34",x:"#3b5a66"},T:{E1:[9,6],E2:[16,3]}},
+{name:"II · Оссуарий и коридор",start:[2,8],map:["####################","#..........#########","#..........#########","#....CC....#########","#..........#########","#..................#","#..........#########","#..........#########","#..........#########","####################"],pal:{f1:"#5a6b80",f2:"#54647a",w:"#2e3646",w2:"#3a4455",x:"#3b5a66"},T:{E3:[7,6],E6:[14,5],E7:[18,5]}},
+{name:"III · Пропасть и круглый зал",start:[2,5],map:["####################","#.......XXXX.......#","#.......XXXX.......#","#.......XXXX.......#","#.......XXXX.......#","#.......bbbb.......D","#.......XXXX.......#","#.......XXXX.......#","#.......XXXX.......#","####################"],pal:{f1:"#1b1e26",f2:"#14161c",w:"#0c0d11",w2:"#161920",x:"#050608"},T:{E8:[6,5],E9:[13,5],E10:[17,5]}}];
+const walkable=(x,y)=>{const t=G.grid[y]&&G.grid[y][x];return t==="."||t==="b"};
+function drawTile(c,t,x,y,P,z){const px=x*32,py=y*32,h=hash(x,y);
+ if(t==="#"){R(c,P.w,1,px,py,32,32);R(c,P.w2,1,px+4,py+4,10,12);R(c,P.w2,1,px+16,py+14,12,12);if(z===0){R(c,"#1a221f",1,px+10,py+2,12,28)}return}
+ if(t==="X"){R(c,P.x,1,px,py,32,32);if(z===2){R(c,"#0b0d12",1,px+(h%20),py+(h%14),8,2)}else{R(c,"#4a6f8a",1,px+(h%18),py+(h%20),10,2)}return}
+ R(c,h%3?P.f1:P.f2,1,px,py,32,32);R(c,P.f2,1,px+(h%24),py+(h%26),6,2);
+ if(t==="~"){R(c,P.x,1,px,py,32,32);R(c,"#5a7a86",1,px+(h%20),py+8,8,2)}
+ if(t==="b"){R(c,"#6b7480",1,px,py+6,32,20);R(c,"#8d97a6",1,px,py+6,32,3)}
+ if(t==="C"){R(c,"#14161c",1,px+2,py+6,28,24);R(c,"#7fd6c2",1,px+6,py+4,20,5);R(c,"#9ff0dc",1,px+10+(G.tick>>3)%6,py-4,6,6)}
+ if(t==="D"){R(c,"#14161c",1,px,py,32,32);R(c,"#8a6a3a",1,px+4,py+2,24,28);R(c,"#7fd6c2",1,px+10,py+10,4,10);R(c,"#7fd6c2",1,px+18,py+8,4,12)}
+ if(z===1&&y===5&&x>=12){R(c,"#8fa6bf",1,px,py,32,32);R(c,"#cfe3f0",1,px+3,py+3,26,4)}
+ if(z===0&&t==="."&&h<4)R(c,"#2a3a34",1,px+8,py+8,6,6);
+ if(z===1&&t==="."&&h>92)R(c,"#e6e0cc",1,px+10,py+12,10,3);
+ if(z===2&&t==="."&&h<6)R(c,"#9fd0f0",1,px+6,py+22,8,2)}
+const FOLLOW=["tan","bro","pir","lar","gua"];
+function render(){G.tick++;if(G.mode==="battle"){renderBattle();return}
+ const Z=ZONES[G.zone];cx.fillStyle="#000";cx.fillRect(0,0,640,360);
+ for(let y=0;y<10;y++)for(let x=0;x<20;x++)drawTile(cx,Z.map[y][x],x,y,Z.pal,G.zone);
+ if(G.target&&(G.tick>>4)%2===0){const[tx,ty]=G.target.xy;R(cx,"#e8c65a",1,tx*32+8,ty*32+8,16,16);R(cx,"#fff3b0",1,tx*32+12,ty*32+12,8,8)}
+ FOLLOW.slice().reverse().forEach((k,i)=>{const idx=FOLLOW.length-i,p=G.trail[idx-1]||G.trail[G.trail.length-1]||[G.x,G.y];sprite(cx,k,p[0]*32,p[1]*32,1)});
+ sprite(cx,"sel",G.x*32,G.y*32,1);
+ R(cx,"rgba(14,17,23,.55)",1,0,320,640,40);cx.fillStyle="#98a2b3";cx.font="8px 'Press Start 2P',monospace";cx.fillText(G.locked?"ОКОВЫ ТЬМЫ: управление отключено":"Стрелки / WASD или клик по клетке",8,344);
+ if(G.locked){cx.fillStyle="rgba(10,8,18,.55)";cx.fillRect(0,0,640,320);R(cx,"#3a3050",1,G.x*32+4,G.y*32+24,24,3)}
+ if(G.banner){cx.fillStyle="rgba(0,0,0,.85)";cx.fillRect(0,0,640,360);cx.fillStyle="#e8c65a";cx.font="14px 'Press Start 2P',monospace";cx.textAlign="center";cx.fillText(G.banner,320,180);cx.textAlign="left"}}
+setInterval(render,50);
+/* --- движение --- */
+function stepTo(nx,ny){if(G.locked||G.mode!=="map"||window.__stop)return false;if(!walkable(nx,ny))return false;
+ G.trail.unshift([G.x,G.y]);G.trail.length=Math.min(G.trail.length,8);G.x=nx;G.y=ny;
+ if(G.target&&nx===G.target.xy[0]&&ny===G.target.xy[1]){const r=G.target.res;G.target=null;G.path=[];$("#hint").textContent="";r()}return true}
+const DIRS={L:[-1,0],R:[1,0],U:[0,-1],D:[0,1]};
+const KEYS={ArrowLeft:"L",a:"L",A:"L",ArrowRight:"R",d:"R",D:"R",ArrowUp:"U",w:"U",W:"U",ArrowDown:"D",s:"D",S:"D"};
+document.addEventListener("keydown",e=>{const d=KEYS[e.key];if(d&&!$("#s-game").hidden&&$("#dlg").hidden&&G.mode==="map"){e.preventDefault();G.path=[];stepTo(G.x+DIRS[d][0],G.y+DIRS[d][1])}});
+$$("#dpad button").forEach(b=>b.onclick=()=>{G.path=[];stepTo(G.x+DIRS[b.dataset.d][0],G.y+DIRS[b.dataset.d][1])});
+function bfs(sx,sy,tx,ty){const q=[[sx,sy]],prev={[sx+","+sy]:null};while(q.length){const[x,y]=q.shift();if(x===tx&&y===ty)break;
+ for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=nx+","+ny;if(k in prev||!(walkable(nx,ny)))continue;prev[k]=[x,y];q.push([nx,ny])}}
+ const out=[];let k=tx+","+ty;if(!(k in prev))return out;while(prev[k]){const[x,y]=k.split(",").map(Number);out.unshift([x,y]);k=prev[k][0]+","+prev[k][1]}return out}
+cv.addEventListener("click",e=>{if(G.mode!=="map"||G.locked||!$("#dlg").hidden)return;const r=cv.getBoundingClientRect();
+ const tx=Math.floor((e.clientX-r.left)/r.width*20),ty=Math.floor((e.clientY-r.top)/r.height*11.25);if(ty>9)return;G.path=bfs(G.x,G.y,tx,ty)});
+setInterval(()=>{if(G.path.length&&G.mode==="map"&&$("#dlg").hidden){const[nx,ny]=G.path.shift();if(!stepTo(nx,ny))G.path=[]}},110);
+function goTo(ep){const Z=ZONES[G.zone];return new Promise(res=>{G.target={ep,xy:Z.T[ep],res};$("#hint").textContent="Идите к жёлтой отметке: стрелки, WASD или клик по карте.";
+ if(AUTO()){const[tx,ty]=Z.T[ep];G.x=tx;G.y=ty;G.trail=[[tx-1,ty]];G.target=null;res()}})}
+async function zoneIntro(i){G.mode="map";G.zone=i;G.grid=ZONES[i].map;[G.x,G.y]=ZONES[i].start;G.trail=[];G.path=[];G.target=null;
+ $("#zone").textContent=ZONES[i].name;addLog("zone",{zone:i});if(AUTO())return;G.banner=ZONES[i].name;await new Promise(r=>setTimeout(r,1300));G.banner=null}
+/* ===== БОЙ ===== */
+Object.assign(NAMES,{ske:"Скелет",str:"Бледный Страж",sha:"Тень-Защитник"});
+const MK={sel:{hp:30,atk:7,mv:4,rng:1,def:1,kind:"light"},tan:{hp:40,atk:6,mv:3,rng:1,def:2,kind:"metal"},hir:{hp:30,atk:6,mv:3,rng:1,def:1,kind:"metal"},pir:{hp:18,atk:8,mv:3,rng:4,def:0,kind:"fire"},bro:{hp:22,atk:4,mv:3,rng:2,def:0,kind:"light"},hel:{hp:26,atk:7,mv:3,rng:1,def:1,kind:"metal"},gua:{hp:30,atk:5,mv:3,rng:1,def:1,kind:"metal"},lar:{hp:18,atk:6,mv:3,rng:5,def:0,kind:"metal"},
+ ske:{hp:10,atk:4,mv:3,rng:1,def:0},str:{hp:30,atk:6,mv:2,rng:1,def:1},sha:{hp:14,atk:5,mv:3,rng:1,def:0},zer:{hp:30,atk:5,mv:3,rng:6,def:0}};
+let B=null;const OX=128,OY=24,GW=12,GH=8;
+const sleep=ms=>new Promise(r=>setTimeout(r,AUTO()?0:ms));
+const alive=t=>B.units.filter(u=>u.team===t&&u.hp>0);
+const at=(x,y)=>B.units.find(u=>u.hp>0&&u.x===x&&u.y===y);
+const dist=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
+const bl=(t,c)=>blog(t,c);
+function mk(k,x,y,team){const m=MK[k];return{k,team,x,y,hp:m.hp,max:m.hp,mv:m.mv,atk:m.atk,rng:m.rng,def:m.def,kind:m.kind||"",name:NAMES[k],acted:false,moved:false,guard:false,uses:3,flash:0}}
+function dmg(a,t){let b=a.atk+rnd(3)-1+(a.team==="a"?B.dBonus:B.eBonus);
+ if(t.k==="sha"){if(a.kind==="metal")b=Math.floor(b/2);else if(a.kind==="light")b=Math.round(b*1.5)}
+ if(t.k==="zer"&&S.flags.pirSacrifice)b=Math.round(b*1.5);
+ b-=t.def+(t.guard?2:0)+(t.team==="a"&&B.wall?2:0);return Math.max(1,b)}
+function hit(a,t,d){
+ if(a.team==="e"&&B.shelter&&B.round===1){bl("Гробница-укрытие: удары не достают.");return}
+ if(t.k==="str"&&!S.flags.e4done){bl(`${a.name} бьёт, но иней гасит удар.`);return}
+ if(d===undefined)d=dmg(a,t);t.hp-=d;t.flash=6;if(t.k==="zer")t.hp=Math.max(1,t.hp);
+ bl(`${a.name} → ${t.name}: −${d}`);
+ if(t.hp<=0){t.hp=0;bl(`${t.name} ${t.team==="e"?"повержен":"выведен из боя"}.`,t.team==="e"?"ok":"no")}}
+function attack(a,t){hit(a,t);if(a.k==="pir"&&t.hp>=0)alive(t.team).filter(o=>o!==t&&dist(o,t)===1).forEach(o=>hit(a,o,3));a.acted=true}
+function reachable(u){const out=[{x:u.x,y:u.y,d:0}],seen={[u.x+","+u.y]:1};let f=[[u.x,u.y,0]];
+ while(f.length){const n=[];for(const[x,y,d]of f){if(d>=u.mv)continue;for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=nx+","+ny;if(nx<0||ny<0||nx>=GW||ny>=GH||seen[k]||at(nx,ny))continue;seen[k]=1;out.push({x:nx,y:ny,d:d+1});n.push([nx,ny,d+1])}}f=n}return out}
+function approach(u,t){let best=null,bs=1e9;for(const p of reachable(u)){const d=Math.abs(p.x-t.x)+Math.abs(p.y-t.y);const s=d>u.rng?(d-u.rng)*10+p.d:(u.rng-d)*.1+p.d*.01;if(s<bs){bs=s;best=p}}
+ if(best){u.x=best.x;u.y=best.y;u.moved=true}}
+function pickTarget(u,foes){let f=foes;if(u.team==="a"){const nz=foes.filter(x=>x.k!=="zer"&&!(x.k==="str"&&!S.flags.e4done));if(nz.length)f=nz}
+ return f.reduce((m,x)=>!m||dist(u,x)<dist(u,m)||(dist(u,x)===dist(u,m)&&x.hp<m.hp)?x:m,null)}
+function zerAI(u){const hs=alive("a");let best=null,bs=-1e9;for(const p of reachable(u)){const md=Math.min(...hs.map(h=>Math.abs(h.x-p.x)+Math.abs(h.y-p.y)));const s=Math.min(md,5)*10-p.d;if(s>bs){bs=s;best=p}}
+ if(best){u.x=best.x;u.y=best.y}const inr=hs.filter(h=>dist(u,h)<=6);if(inr.length){const t=inr.reduce((m,x)=>x.hp<m.hp?x:m);hit(u,t)}}
+function shootAmpoule(u){const dc=B.frost10?19:17,z=alive("e").find(e=>e.k==="zer"),adv=!!S.flags.trustDebt;
+ const w=check({ep:"final",label:"Мудрость Ларса",mod:2,dc:10,why:"Сообразит ли сам, что бить надо по ампуле.",adv});let ok=false;
+ if(w)ok=check({ep:"final",label:"Выстрел Ларса",mod:5,dc,why:"Ампула над дверью, Тени мешают прицелу.",adv});
+ bl(flushRolls(),ok?"ok":"no");u.acted=true;
+ if(ok){B.tasks.amp=true;z.ampBroken=true;bl("Ампула разбита на самом Зерексе.","ok")}else bl(w?"Выстрел мимо.":"Ларс не сразу понял, что делать.","no")}
+function grab(u,z){const a=check({ep:"final",label:"Атлетика Селестины",mod:6,dc:7,why:"Захват против Защиты 7: меч брошен, чтобы схватить, а не ударить."});
+ const c=check({ep:"final",label:"Громовая волна (Телосложение)",mod:3,dc:13,why:"«Так умри со мной!» Жезл бьёт в упор."});
+ bl(flushRolls(),a?"ok":"no");if(!c){u.hp=Math.max(1,u.hp-6);bl("Волна бьёт Селестину: −6.","no")}u.acted=true;
+ if(a){B.tasks.grab=true;bl("Зерекс схвачен и оглушён: удар головой о дверь.","ok")}}
+function allyAuto(u){const foes=alive("e");if(!foes.length)return;
+ if(u.k==="bro"&&u.uses>0){const w=alive("a").filter(a=>a.hp<a.max*.6&&dist(u,a)<=3)[0];if(w){heal(u,w);return}}
+ if(B.kind===3){const z=foes.find(f=>f.k==="zer");
+  if(u.k==="lar"&&!B.tasks.amp&&z){if(dist(u,z)>8)approach(u,z);if(dist(u,z)<=8){shootAmpoule(u);return}}
+  if(u.k==="sel"&&z){approach(u,z);if(dist(u,z)===1){B.tasks.reach=true;if(B.tasks.amp){grab(u,z);return}}}}
+ const t=pickTarget(u,foes);if(!t)return;approach(u,t);if(dist(u,t)<=u.rng)attack(u,t);else u.acted=true}
+function heal(u,t){const h=8+(S.res.faith>=4?2:0);t.hp=Math.min(t.max,t.hp+h);u.uses--;u.acted=true;bl(`${u.name} лечит ${t.name}: +${h}`,"ok")}
+function aiAct(u){const foes=alive("a");if(!foes.length)return;if(u.k==="zer"){zerAI(u);return}
+ const t=pickTarget(u,foes);approach(u,t);if(dist(u,t)<=u.rng)hit(u,t)}
+function setupBattle(kind,tries){const f=S.flags;B={kind,units:[],round:1,phase:"",sel:null,mode:"",reach:[],busy:false,over:false,tasks:{amp:false,reach:false,grab:false},
+ dBonus:(S.res.unity>=4?1:0)-(S.res.unity<=1?1:0)+(f.surge&&kind===3?2:0),eBonus:(f.scouted&&kind===1?1:0)+(f.looseFirst&&kind===1?2:0),wall:false,shelter:false,frost10:false,extra:false,enemyFirst:false,e5:false,tries};
+ const A=(k,x,y)=>B.units.push(mk(k,x,y,"a")),E=(k,x,y)=>B.units.push(mk(k,x,y,"e"));
+ if(kind===1){A("sel",2,3);A("tan",3,2);A("hir",3,4);A("gua",2,5);A("pir",1,2);A("bro",1,4);A("hel",2,1);A("lar",1,6);
+  E("str",8,2);E("str",8,5);E("ske",7,3);E("ske",7,4);E("ske",9,3);
+  B.enemyFirst=!!f.lostFirst;B.extra=!!(f.bonusFirst||f.assault);
+  const d=random100("E3","Случайное событие: бой 1");B.d100=d;
+  if(d>=61&&d<=85){B.shelter=true;B.intro="Случайное событие (d100="+d+"): хирдман находит у правого фланга древнюю гробницу-укрытие. Первая засада по отряду не достаёт."}
+  else if(d>=86){B.units.filter(u=>u.team==="a").forEach(u=>u.hp=Math.max(1,u.hp-3));B.intro="Случайное событие (d100="+d+"): Зерекс зовёт Облако смерти, яд по площади: отряд теряет здоровье."}
+  else B.intro="Случайное событие (d100="+d+"): ничего не происходит."}
+ else{A("sel",2,3);A("gua",2,5);A("lar",1,6);if(!f.pirSacrifice)A("pir",1,2);A("hir",3,4);
+  B.units.find(u=>u.k==="sel").mv=7;
+  const d=random100("final","Случайное событие: обрушившийся мост");B.d100=d;B.helpNow=d>=80;
+  if(B.helpNow){A("tan",3,2);A("bro",1,4);B.intro="Случайное событие (d100="+d+"): обрушился мост, и Тан с Бронном успели переправиться раньше."}else B.intro="Случайное событие (d100="+d+"): мост держится, Тан и Бронн подойдут на втором раунде.";
+  E("zer",9,3);E("sha",8,2);E("sha",8,5);B.frost10=S.res.frost>=10;
+  if(f.poison)B.units.filter(u=>u.team==="a").forEach(u=>u.hp=Math.max(1,u.hp-5));
+  if(f.pirPoison){const p=B.units.find(u=>u.k==="pir");if(p)p.hp=Math.max(1,p.hp-6)}
+  if(f.gormDead){const g=B.units.find(u=>u.k==="gua");g.hp-=8;g.max-=8}
+  if(f.pirSacrifice)B.intro+=" Пирокар отдал весь огонь одним ударом: Зерекс ранен, но Пирокара в бою нет.";
+  if(B.frost10)B.intro+=" Холод на пределе: появится вторая волна Теней, а ампулу разбить сложнее."}
+ if(tries>=2)B.units.filter(u=>u.team==="e").forEach(u=>u.hp=Math.ceil(u.hp/2))}
+/* ===== БОЙ: отрисовка, управление, цикл ===== */
+function renderBattle(){if(!B)return;const z=B.kind===1?1:2,P=ZONES[z].pal;cx.fillStyle="#0b0d12";cx.fillRect(0,0,640,360);
+ cx.save();cx.translate(OX,OY);for(let y=0;y<GH;y++)for(let x=0;x<GW;x++)drawTile(cx,".",x,y,P,z);
+ if(B.kind===1){R(cx,"#14161c",1,5*32+2,3*32+6,60,24);R(cx,"#7fd6c2",1,5*32+6,3*32+4,52,5)}
+ B.reach.forEach(p=>R(cx,"rgba(90,150,230,.35)",1,p.x*32,p.y*32,32,32));
+ if(B.sel&&B.phase==="player")alive("e").forEach(e=>{if(dist(B.sel,e)<=B.sel.rng&&!B.sel.acted)R(cx,"rgba(217,103,79,.4)",1,e.x*32,e.y*32,32,32)});
+ [...B.units].sort((a,b)=>a.y-b.y).forEach(u=>{if(u.hp<=0&&u.team==="e")return;cx.globalAlpha=u.hp<=0?.3:(u.acted&&u.team==="a"&&B.phase==="player"?.6:1);
+  sprite(cx,u.k,u.x*32,u.y*32,1,{hurt:u.flash>0});cx.globalAlpha=1;if(u.flash>0)u.flash--;
+  R(cx,"#000",1,u.x*32+2,u.y*32,28,4);R(cx,u.team==="a"?"#7fd6a2":"#d9674f",1,u.x*32+3,u.y*32+1,26*Math.max(0,u.hp)/u.max,2);
+  if(u.k==="zer"&&u.ampBroken)R(cx,"#7fd6c2",1,u.x*32+26,u.y*32+4,4,4);
+  if(u===B.sel){cx.strokeStyle="#e8c65a";cx.lineWidth=2;cx.strokeRect(u.x*32+1,u.y*32+1,30,30)}});
+ cx.restore();cx.fillStyle="#9fd0f0";cx.font="8px 'Press Start 2P',monospace";
+ cx.fillText(`Раунд ${B.round} · ${B.phase==="player"?"ход отряда":"ход врага"}`,8,16);
+ if(B.kind===3){const t=B.tasks;cx.fillStyle="#e8c65a";cx.fillText(`${t.amp?"[x]":"[ ]"} Ампула   ${t.reach?"[x]":"[ ]"} Достичь Зерекса   ${t.grab?"[x]":"[ ]"} Захват`,8,350)}
+ else{cx.fillStyle="#98a2b3";cx.fillText("Победа: все враги повержены",8,350)}}
+function ui(){const c=$("#bctl");c.innerHTML="";if(!B)return;const u=B.sel,info=$("#binfo");
+ const mkb=(t,fn,dis)=>{const b=document.createElement("button");b.textContent=t;b.disabled=!!dis;b.onclick=fn;c.appendChild(b)};
+ if(B.phase!=="player"||B.busy){info.textContent=B.busy?"Идёт действие…":"Ход врага.";return}
+ info.textContent=u&&!u.acted?`${u.name}: ${u.moved?"переместился":"синие клетки: перемещение"}; красные: атака врага в радиусе ${u.rng}.`:"Выберите свой юнит щелчком по нему.";
+ if(u&&!u.acted){const z=alive("e").find(e=>e.k==="zer");
+  if(u.k==="bro")mkb(`Исцеление (${u.uses})`,()=>{B.mode="heal";info.textContent="Щёлкните по союзнику в радиусе 3."},u.uses<=0);
+  if(u.k==="lar"&&B.kind===3)mkb("Выстрел по ампуле",async()=>{B.busy=true;shootAmpoule(u);await afterAction()},B.tasks.amp||!z||dist(u,z)>8);
+  if(u.k==="sel"&&B.kind===3)mkb("Захват",async()=>{B.busy=true;grab(u,z);await afterAction()},!B.tasks.amp||!z||dist(u,z)!==1);
+  mkb("Защита",()=>{u.guard=true;u.acted=true;B.sel=null;B.reach=[];ui();checkAllActed()});mkb("Пропустить",()=>{u.acted=true;B.sel=null;B.reach=[];ui();checkAllActed()})}
+ mkb("Конец фазы",()=>endPhase());mkb("Авто-ход отряда",async()=>{B.busy=true;ui();await runAuto();endPhase()})}
+function endPhase(){if(!B||B.busy||!B.endPhase)return;const f=B.endPhase;B.endPhase=null;B.sel=null;B.reach=[];f()}
+function checkAllActed(){if(alive("a").every(u=>u.acted)&&B.endPhase)setTimeout(()=>{if(B&&B.phase==="player"&&!B.busy)endPhase()},500)}
+async function afterAction(){
+ if(!B.e5&&B.units.some(u=>u.k==="str"&&u.hp<=0)){B.e5=true;B.busy=true;await episode("E5");hideDlg()}
+ if(B.kind===1&&alive("e").length===0)B.over=true;if(B.kind===3&&B.tasks.grab)B.over=true;
+ if(B.tasks.amp===false&&B.kind===3){}
+ const z=alive("e").find(e=>e.k==="zer");if(z&&B.sel&&B.sel.k==="sel"&&dist(B.sel,z)===1)B.tasks.reach=true;
+ B.busy=false;B.sel=null;B.reach=[];ui();if(B.over&&B.endPhase){const f=B.endPhase;B.endPhase=null;f()}else checkAllActed()}
+cv.addEventListener("click",async e=>{if(G.mode!=="battle"||!B||B.phase!=="player"||B.busy||!$("#dlg").hidden)return;
+ const r=cv.getBoundingClientRect(),gx=Math.floor(((e.clientX-r.left)/r.width*640-OX)/32),gy=Math.floor(((e.clientY-r.top)/r.height*360-OY)/32);
+ if(gx<0||gy<0||gx>=GW||gy>=GH)return;const t=at(gx,gy),s=B.sel;
+ if(t&&t.team==="a"){if(B.mode==="heal"&&s&&s.k==="bro"&&dist(s,t)<=3&&t.hp<t.max){B.mode="";B.busy=true;heal(s,t);await afterAction();return}
+  if(!t.acted){B.sel=t;B.mode="";B.reach=t.moved?[]:reachable(t);ui()}return}
+ if(!s||s.acted)return;
+ if(t&&t.team==="e"&&dist(s,t)<=s.rng){B.busy=true;ui();attack(s,t);await afterAction();return}
+ if(!t&&!s.moved&&B.reach.some(p=>p.x===gx&&p.y===gy)){s.x=gx;s.y=gy;s.moved=true;B.reach=[];ui()}});
+function playerPhase(){B.phase="player";B.units.forEach(u=>{if(u.team==="a"){u.acted=false;u.moved=false;u.guard=false}});B.sel=null;B.reach=[];B.mode="";ui();
+ const b=B;return new Promise(async res=>{b.endPhase=res;if(AUTO()&&!AUTO().manual){b.busy=true;await runAuto();if(b.endPhase){b.endPhase=null;res()}}else checkAllActed()})}
+async function runAuto(){const b=B;b.busy=true;for(const u of alive("a")){if(b.over)break;if(u.acted)continue;allyAuto(u);u.acted=true;await afterAction();b.busy=true;await sleep(140)}b.busy=false}
+async function enemyPhase(){B.phase="enemy";B.sel=null;B.reach=[];ui();for(const u of alive("e")){if(B.over||alive("a").length===0)break;await sleep(280);aiAct(u);await sleep(160)}
+ if(B.wall&&--B.wallLeft<=0)B.wall=false;if(B.auraLeft&&--B.auraLeft<=0)B.eBonus+=2}
+const freeNear=(x,y)=>{for(let d=0;d<6;d++)for(let dy=-d;dy<=d;dy++)for(let dx=-d;dx<=d;dx++){const nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<GW&&ny<GH&&!at(nx,ny))return[nx,ny]}return[x,y]};
+const spawn=(k,team,x,y)=>{const[a,b]=freeNear(x,y),u=mk(k,a,b,team);B.units.push(u);return u};
+async function e4(){const{p}=await episode("E4");S.flags.e4done=true;let txt="";const strs=alive("e").filter(u=>u.k==="str");
+ if(p.k==="A"){if(check({ep:"E4",label:"Харизма",mod:4,dc:18,why:"«Дирижёр»: три приказа за один ход."})){strs.forEach(s=>{s.x=Math.min(GW-1,s.x+3);while(B.units.some(o=>o!==s&&o.hp>0&&o.x===s.x&&o.y===s.y))s.x--});B.eBonus-=2;B.auraLeft=2;S.flags.faithPen=true;txt="Стражи отступают, аура слабеет. Цена придёт к концу боя: Вера −2."}
+  else{const g=B.units.find(u=>u.k==="gua");g.hp=Math.max(1,g.hp-10);txt="Приказы наложились друг на друга. Гвардия несёт потери."}}
+ if(p.k==="B"){if(strs[0])strs[0].hp=Math.max(1,strs[0].hp-10);B.units.filter(u=>u.team==="a"&&(u.k==="gua"||u.k==="hir")).forEach(u=>u.hp=Math.max(1,u.hp-5));txt="Главная цель назначена. На втором фронте потери выше, но бой станет короче."}
+ if(p.k==="C"){B.wall=true;B.wallLeft=1;txt="Отряд сомкнулся за стеной хирдов. Потерь мало, но холод вошёл глубже."}
+ await dialogue({sp:"nar",title:"Итог",text:txt,note:flushRolls(),more:"Дальше"});hideDlg()}
+const lost=()=>alive("a").length===0;
+async function loop(){
+ if(B.enemyFirst){bl("Первый ход потерян: враги ходят первыми.","no");await enemyPhase();if(lost())return"lose"}
+ for(;;){await playerPhase();if(B.over)return"win";
+  if(B.extra){B.extra=false;bl("Бонусный первый ход: отряд действует ещё раз.","ok");await playerPhase();if(B.over)return"win"}
+  await enemyPhase();if(lost())return"lose";B.round++;
+  if(B.kind===1&&B.round===3&&!S.flags.e4done)await e4();
+  if(B.kind===1&&B.round===5){const h=B.units.find(u=>u.k==="hel"&&u.hp>0);if(h){h.hp=0;bl("Хельга покидает бой: её сила Света иссякла.")}}
+  if(B.kind===3&&B.round===2&&!B.helpNow){spawn("tan","a",3,2);spawn("bro","a",1,4);bl("Тан и Бронн переправились и вступают в бой.","ok")}
+  if(B.kind===3&&B.round===3&&B.frost10){spawn("sha","e",9,2);spawn("sha","e",9,5);bl("Холод на пределе: вторая волна Теней.","no")}
+  B.units.filter(u=>u.team==="e"&&u.hp<=0).forEach(u=>u.x=-9)}}
+async function runBattle(kind){let tries=0;
+ for(;;){setupBattle(kind,tries);G.mode="battle";$("#bctl").hidden=false;$("#blog").innerHTML="";$("#blog").hidden=false;$("#zone").textContent=kind===1?"Бой 1 · Зал котла":"Бой 3 · Последний реагент";
+  await dialogue({sp:kind===1?"nar":"zer",title:kind===1?"Бой 1 · Зал котла":"Бой 3 · Последний реагент",
+   text:kind===1?"Бледные Стражи разворачиваются с мертвенной плавностью. Скелеты шагают из ниш, над котлом вздувается зелёный пар. Угроз заведомо больше, чем действий.":"«Опоздали… Но вы стали свидетелями. Последний реагент завершит работу. Вы не остановите тишину, которая идёт по этим горам.»\n\nЦель боя: не убить, а сорвать ритуал и захватить Зерекса живым. Три задачи в любом порядке: разбить ампулу (Ларс), достичь Зерекса (Селестина), захватить. Тени уязвимы к Свету и устойчивы к металлу.",
+   note:B.intro+(kind===1?"\nУправление: щёлкните по своему юниту, затем по синей клетке (шаг) или по врагу в радиусе (атака). Пока длится натиск, иней Стражей не пробить.":""),more:"К бою"});hideDlg();
+  const res=await loop();addLog("battle_result",{battle:kind,result:res,rounds:B.round});
+  if(res==="win")break;tries++;bl("Отряд отступает и собирается заново.","no");await sleep(700)}
+ if(kind===1&&S.flags.faithPen){fx({faith:-2})}
+ $("#bctl").hidden=true;$("#binfo").textContent="";$("#blog").hidden=true;G.mode="map";B=null}
+/* ===== СЦЕНАРИЙ ИГРЫ ===== */
+const wait=ms=>new Promise(r=>setTimeout(r,AUTO()?0:ms));
+function endingKey(){let s=0;for(const e in EP){const t=S.tags[e];s+=t==="D"?2:t==="G"?1:0}S.iir=s;let k=s<=6?"thaw":s<=13?"grey":"frost";if(S.flags.gormDead&&k==="thaw")k="grey";return k}
+function letter(){
+ const dm=[];for(const e of["E3","E4","E5","E7","E8","E9"]){const p=S.choices&&S.choices[e];if(p&&p.deed)dm.push({t:p.tag,d:p.deed})}
+ const rank={C:0,G:1,D:2};dm.sort((a,b)=>rank[a.t]-rank[b.t]);const d=dm.slice(0,3).map(x=>x.d);
+ const rec=(S.choices.E5&&S.choices.E5.k!=="B")?"Иногда стоит дать отряду минуту после победы.":(S.tags.E7==="D"||S.tags.E9==="D")?"Иногда стоит доверить тяжёлое тем, кто рядом: они способны нести.":"Иногда достаточно сделать один шаг и назвать вслух следующий.";
+ return "Командир.\n\nМентол чище, когда лёд тоньше, а сегодня лёд был толстым.\n\nЯ запомнил несколько твоих решений. Ты "+d.join("; ты ")+".\n\n"+rec+"\n\n"+FINAL_LINE[S.finalChoice]+"\n\nДверь осталась запечатанной, и это не твоя вина. Отдохни.\n\nБронн\n\nИгра не заменяет разговор с живым человеком. Если вам тяжело, поговорите с близкими или с психологом; контакты службы поддержки укажет исследователь."}
+async function playGame(){
+ show("s-game");drawHud();hideDlg();$("#blog").hidden=true;
+ await zoneIntro(0);
+ await goTo("E1");await episode("E1");hideDlg();
+ await goTo("E2");await episode("E2");hideDlg();
+ await zoneIntro(1);
+ await goTo("E3");await episode("E3");hideDlg();
+ await runBattle(1);
+ await dialogue({sp:"nar",title:"Конец боя",text:"Второй Страж добит Таном и хирдами. Зерекс отходит в проход за котлом. Дым ещё стелется в залах позади, и запах горького миндаля тянется за отрядом, как память о Стражах.",more:"В коридор"});hideDlg();
+ await goTo("E6");
+ const adv=!!S.flags.cautious,dis=!!S.flags.surge;
+ const found=check({ep:"E6",label:"Расследование Ларса",mod:3,dc:16,why:"СЛ 16: пол слишком ровный, а в склепе такого не бывает.",adv:adv&&!dis,dis:dis&&!adv});
+ const r6=await episode("E6",{note:flushRolls()+(adv?"\nОсторожность из начала пути: подвох виден заранее (преимущество).":"")+(dis?"\nРывок на волне успеха: проверка с помехой.":""),adj:found?{A:{frost:1}}:{}});
+ if(!found&&r6.p.k==="B")S.flags.pirPoison=true;hideDlg();
+ await goTo("E7");const cut=!!S.flags.tanCut;
+ await episode("E7",{text:EP.E7.text+(cut?"\n\nТан отрезан от отряда: обход займёт дольше, и каждая минута ощущается тяжелее.":""),adj:cut?{B:{unity:0,frost:3}}:{}});hideDlg();
+ await zoneIntro(2);await goTo("E8");
+ const dead=!!S.flags.gormDead,wound=!!S.flags.trustDebt;
+ const t8=EP.E8.text+(dead?" Горм провалился, коротко вскрикнув, и вскрик оборвался слишком быстро. Ларс успел поймать за плащ другого; Селестина повисла на одной руке над темнотой, и сверху донеслось, почти ласково: «Предсказуемо. Ярость всегда опережает рассудок. Ваша поспешность похоронит вас здесь.» Они не могли знать. Никто не мог. Тогда откуда эта ясная, как лёд, ярость?":wound?" Горм сорвался с карниза, но Ларс подхватил его за ремень: ранен, но жив. Сверху донеслось, почти ласково: «Предсказуемо.» Они не могли знать. Тогда откуда эта ясная, как лёд, ярость?":" Отряд шёл по карнизам по одному, и все добрались. Сверху донеслось, почти ласково: «Предсказуемо. Ярость всегда опережает рассудок.» Они не могли знать. Тогда откуда эта ясная, как лёд, ярость?");
+ const o8=EP.E8.opts.map(o=>Object.assign({},o));
+ if(!dead){o8[1].t="Назвать каждого по имени вслух, убедиться, что все на месте, и дать Бронну (когда подойдёт) снять напряжение светом; и продолжить.";o8[1].fx={unity:2};o8[2].t="Отвернуться и вести бой как механизм, не глядя на тех, кто рядом."}
+ if(!dead&&!wound){check({ep:"E8",label:"Карниз (Ловкость)",mod:2,dc:12,why:"Узкий карниз над провалом, вой ветра."})||fx({frost:1})}
+ await episode("E8",{text:t8,opts:o8,note:flushRolls()});hideDlg();
+ await goTo("E9");G.locked=true;$("#hint").textContent="Тьма легла на запястья. Управление Селестиной отключено на этот ход.";await wait(2200);
+ await episode("E9",{note:"Опутывающая тьма: вы не можете управлять Селестиной."});
+ const w=check({ep:"E9",label:"Мудрость Селестины",mod:3,dc:15,why:"Сбой тьмы: хватит ли воли разорвать оковы."});G.locked=false;$("#hint").textContent="";
+ await dialogue({sp:"sel",title:"Итог",text:w?"«Моя… воля!» Оковы рассыпаются в прах.":"Тьма держит ещё миг, но отряд успевает перехватить инициативу, и оковы слабеют.",note:flushRolls(),more:"Дальше"});hideDlg();
+ await goTo("E10");
+ const L=[dead?"Павшие: Горм.":"Павших нет.",S.res.faith>=4?"Вера: горит ровно.":S.res.faith>=2?"Вера: тускнеет.":"Вера: едва тлеет.",S.res.frost>=7?"Холод: сковал дыхание.":S.res.frost>=4?"Холод: стоит в дыхании.":"Холод: пока терпим.",S.res.unity>=4?"Строй: держится.":S.res.unity>=2?"Строй: шатается.":"Строй: распался на одиночек."];
+ const r10=await episode("E10",{text:EP.E10.text+"\n\nЗерекс, ушедший вперёд, хлопает дверью: «Тратите силы на тех, кто всё равно станет прахом. Очень трогательно.»\n\nНоша:\n"+L.join("\n")});hideDlg();
+ if(S.flags.falseExit){fx({frost:3});await dialogue({sp:"nar",title:"Ложный выход",text:"Отход не получился: усыпальница не отпускает. Отряд возвращается к двери, и холод становится глубже.",more:"К двери"});hideDlg()}
+ await runBattle(3);
+ await dialogue({sp:"nar",title:"Круглый зал",text:"Тан разбил вторую Тень; первая, обращённая светом Бронна, забилась в угол. Зерекс, оглушённый, повис в руках Селестины; гематитовое кольцо скатилось с его пальца и застучало по плите. Сердце его билось так редко, что Селестина слышала собственное. «Он умирает тем же, чем боялась умереть я: изнутри, раньше, чем тело».\n\n— Глупцы… — прошептал он. — Вы… не понимаете… что разбудили…\n\nДверь осталась запечатанной. За ней что-то шло — тихо, без злобы.",more:"Дальше"});
+ const f=await dialogue({sp:"sel",title:"Что дальше?",text:"Что вы сделаете с пленником?",opts:FINAL_CH.map(x=>({k:x[1],t:x[0]}))});
+ S.finalChoice=FINAL_CH[f.i][1];addLog("final_choice",{option:S.finalChoice});
+ const k=endingKey();S.ending=k;const E=ENDINGS[k];
+ let tail=k==="grey"?(S.flags.gormDead?" Горм остался в пропасти.":" Не все вернулись целыми."):k==="frost"?(S.flags.gormDead?" Арн и Горм не вернулись.":" Арн не вернулся."):"";
+ if(k==="grey"&&S.flags.turnedAway&&S.flags.gormDead)tail+=" Бронн прочитал вслух его имя.";
+ addLog("ending",{ending:k,iir:S.iir});
+ await dialogue({sp:"nar",title:E.name,text:E.txt.replace(" Арн и Горм не вернулись.","").replace(" Дверь не открыта, и это честная нота продолжения."," Дверь не открыта, и это честная нота продолжения.")+tail,more:"Письмо"});
+ await dialogue({sp:"bro",title:"Письмо",text:letter(),more:"Закончить игру"});hideDlg();
+}
+/* --- запуск --- */
+G.grid=ZONES[0].map;drawHud();show("s-title");window.__S=S;
+</script>
+
+</body></html>
