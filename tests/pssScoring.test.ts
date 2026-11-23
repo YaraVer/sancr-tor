@@ -115,8 +115,9 @@ describe('validateAnswers', () => {
 });
 
 describe('pss10.json structure', () => {
-  it('is configured for post-game administration and has 10 items', () => {
-    expect(questionnaire.administration.timing).toBe('post_game_only');
+  it('is configured for pre/post administration and has 10 items', () => {
+    expect(questionnaire.administration.timing).toBe('pre_and_post_game');
+    expect(questionnaire.administration.phases).toEqual(['pre_game', 'post_game']);
     expect(questionnaire.items).toHaveLength(10);
     expect(questionnaire.scoring.reverse_items).toEqual([4, 5, 7, 8]);
   });

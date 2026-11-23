@@ -17,7 +17,8 @@ export interface PSSQuestionnaire {
   title: string;
   version: string;
   administration: {
-    timing: 'post_game_only';
+    timing: 'pre_and_post_game';
+    phases?: Array<'pre_game' | 'post_game'>;
     mode: string;
     note: string;
   };

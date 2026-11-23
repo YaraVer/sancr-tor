@@ -1,8 +1,13 @@
 import Phaser from 'phaser';
+
 import { BootScene } from './scenes/BootScene';
 import { PreloadScene } from './scenes/PreloadScene';
 import { TitleScene } from './scenes/TitleScene';
 import { ConsentScene } from './scenes/ConsentScene';
+import { ModeSelectScene } from './scenes/ModeSelectScene';
+import { PssFormScene } from './scenes/PssFormScene';
+import { StoryScene } from './scenes/StoryScene';
+import { ResultsScene } from './scenes/ResultsScene';
 import { PostGamePSSScene } from './scenes/PostGamePSSScene';
 import { SpritePreviewScene } from './scenes/SpritePreviewScene';
 
@@ -18,7 +23,18 @@ const config: Phaser.Types.Core.GameConfig = {
     width: 640,
     height: 360,
   },
-  scene: [BootScene, PreloadScene, TitleScene, ConsentScene, SpritePreviewScene, PostGamePSSScene],
+  scene: [
+    BootScene,
+    PreloadScene,
+    TitleScene,
+    ConsentScene,
+    ModeSelectScene,
+    PssFormScene,
+    StoryScene,
+    ResultsScene,
+    PostGamePSSScene,
+    SpritePreviewScene,
+  ],
 };
 
 const game = new Phaser.Game(config);

@@ -15,7 +15,7 @@ export class TitleScene extends Phaser.Scene {
       color: '#e6e1d5',
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, 130, 'Нарративный прототип (E1–E10)\nи пост-игровой опросник PSS-10', {
+    this.add.text(width / 2, 130, 'Нарративный прототип (E1–E10)\nс двумя режимами: с PSS-10 и без тестирования', {
       fontFamily: 'Georgia, serif',
       fontSize: '14px',
       color: '#b8b09d',
@@ -39,7 +39,7 @@ export class TitleScene extends Phaser.Scene {
 
     preview.on('pointerdown', () => this.scene.start('SpritePreviewScene'));
 
-    this.add.text(width / 2, height - 28, 'Стартовый каркас. Сюжет и PSS связаны по меткам; опросник — после игры.', {
+    this.add.text(width / 2, height - 28, 'Текст истории: public/data/story.json · режимы выбираются после согласия', {
       fontFamily: 'Georgia, serif',
       fontSize: '11px',
       color: '#7f8a99',

@@ -32,7 +32,16 @@ export class PreloadScene extends Phaser.Scene {
   create(): void {
     // Dev shortcut: ?scene=SpritePreviewScene opens a tech scene directly.
     const requested = new URLSearchParams(window.location.search).get('scene');
-    const allowed = ['TitleScene', 'ConsentScene', 'SpritePreviewScene', 'PostGamePSSScene'];
+    const allowed = [
+      'TitleScene',
+      'ConsentScene',
+      'ModeSelectScene',
+      'PssFormScene',
+      'StoryScene',
+      'ResultsScene',
+      'SpritePreviewScene',
+      'PostGamePSSScene',
+    ];
     this.scene.start(requested && allowed.includes(requested) ? requested : 'TitleScene');
   }
 }
