@@ -4,6 +4,8 @@ import { BootScene } from './scenes/BootScene';
 import { PreloadScene } from './scenes/PreloadScene';
 import { TitleScene } from './scenes/TitleScene';
 import { ConsentScene } from './scenes/ConsentScene';
+import { ParticipantCodeScene } from './scenes/ParticipantCodeScene';
+import { MapScene } from './scenes/MapScene';
 import { ModeSelectScene } from './scenes/ModeSelectScene';
 import { PssFormScene } from './scenes/PssFormScene';
 import { StoryScene } from './scenes/StoryScene';
@@ -28,7 +30,9 @@ const config: Phaser.Types.Core.GameConfig = {
     PreloadScene,
     TitleScene,
     ConsentScene,
+    ParticipantCodeScene,
     ModeSelectScene,
+    MapScene,
     PssFormScene,
     StoryScene,
     ResultsScene,

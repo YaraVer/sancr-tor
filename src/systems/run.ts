@@ -27,6 +27,7 @@ export interface PssSnapshot {
 export interface RunState {
   sessionId: string;
   mode: RunMode;
+  participantCode?: string;
   startedAt: string;
   episodeIndex: number;
   effects: Record<string, number>;
@@ -40,10 +41,11 @@ export function createSessionId(now = Date.now()): string {
   return `s${now.toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function createRun(mode: RunMode, now = new Date()): RunState {
+export function createRun(mode: RunMode, participantCode?: string, now = new Date()): RunState {
   return {
     sessionId: createSessionId(now.getTime()),
     mode,
+    participantCode,
     startedAt: now.toISOString(),
     episodeIndex: 0,
     effects: {},

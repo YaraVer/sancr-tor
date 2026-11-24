@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { makeTextButton } from '../ui/buttons';
 import { appendLog } from '../systems/storage';
 import { createRun, setCurrentRun, type RunMode } from '../systems/run';
+import { getParticipantCode } from '../systems/participant';
 
 export class ModeSelectScene extends Phaser.Scene {
   constructor() {
@@ -30,12 +31,13 @@ export class ModeSelectScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const pick = (mode: RunMode) => {
-      const run = setCurrentRun(createRun(mode));
+      const run = setCurrentRun(createRun(mode, getParticipantCode() || undefined));
       appendLog({
         t: new Date().toISOString(),
         session: run.sessionId,
         event: 'mode_selected',
         mode,
+        participant: run.participantCode ?? '',
       });
       if (mode === 'with_pss') {
         this.scene.start('PssFormScene', { phase: 'pre_game' });

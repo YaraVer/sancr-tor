@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "checks": [
+    {
+      "id": "e4-charisma",
+      "episode": "E4",
+      "label": "Харизма",
+      "mod": 4,
+      "dc": 18,
+      "onSuccess": { "effects": { "faith": 1 }, "flags": ["e4_inspired"] },
+      "onFailure": { "effects": { "frost": 1 }, "flags": ["e4_falter"] }
+    },
+    {
+      "id": "e6-investigation",
+      "episode": "E6",
+      "label": "Расследование Ларса",
+      "mod": 3,
+      "dc": 16,
+      "onSuccess": { "effects": { "unity": 1 }, "flags": ["e6_clue"] },
+      "onFailure": { "effects": { "frost": 1 }, "flags": ["e6_missed"] }
+    },
+    {
+      "id": "e8-acrobatics",
+      "episode": "E8",
+      "label": "Ловкость на карнизе",
+      "mod": 2,
+      "dc": 12,
+      "onSuccess": { "effects": { "unity": 1 }, "flags": ["e8_grace"] },
+      "onFailure": { "effects": { "frost": 1 }, "flags": ["e8_slip"] }
+    },
+    {
+      "id": "e9-wisdom",
+      "episode": "E9",
+      "label": "Мудрость Селестины",
+      "mod": 3,
+      "dc": 15,
+      "onSuccess": { "effects": { "faith": 1 }, "flags": ["e9_break"] },
+      "onFailure": { "effects": { "frost": 1 }, "flags": ["e9_hold"] }
+    }
+  ]
+}

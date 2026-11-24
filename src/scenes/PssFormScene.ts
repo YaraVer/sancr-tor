@@ -148,6 +148,7 @@ export class PssFormScene extends Phaser.Scene {
       t: snapshot.t,
       session: run.sessionId,
       event: this.phase === 'pre_game' ? 'pss_pre' : 'pss_post',
+      participant: run.participantCode ?? '',
       questionnaire: q.id,
       ...pssSummary(score),
     });

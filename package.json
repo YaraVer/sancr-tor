@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Крипты Санкр-Тор — web narrative JRPG prototype and PSS-10 psychological instrument scaffold",
+  "description": "Крипты Санкр-Тор — веб-прототип нарративной RPG с PSS-10, картой и тактическими боями",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

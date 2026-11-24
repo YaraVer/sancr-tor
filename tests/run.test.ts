@@ -17,7 +17,8 @@ const endings = endingsJson as unknown as EndingsData;
 
 describe('run / два режима', () => {
   it('создаёт сессию нужного режима', () => {
-    const run = createRun('with_pss', new Date('2026-01-01T00:00:00.000Z'));
+    const run = createRun('with_pss', 'A017', new Date('2026-01-01T00:00:00.000Z'));
+    expect(run.participantCode).toBe('A017');
     expect(run.mode).toBe('with_pss');
     expect(run.startedAt).toBe('2026-01-01T00:00:00.000Z');
     expect(run.records).toEqual([]);

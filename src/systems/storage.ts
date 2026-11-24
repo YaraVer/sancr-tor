@@ -7,6 +7,7 @@ const LOGS_KEY = 'sancr-tor:logs:v1';
 export interface StoredRun {
   sessionId: string;
   mode: RunMode;
+  participant?: string;
   startedAt: string;
   endedAt: string;
   endingId: string;

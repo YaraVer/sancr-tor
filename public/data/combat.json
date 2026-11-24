@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "units": {
+    "celestina": { "hp": 28, "atk": 7, "mv": 5, "rng": 1, "def": 3, "kind": "hero" },
+    "tan": { "hp": 32, "atk": 6, "mv": 4, "rng": 1, "def": 4, "kind": "hero" },
+    "bronn": { "hp": 36, "atk": 8, "mv": 3, "rng": 1, "def": 5, "kind": "hero" },
+    "lars": { "hp": 22, "atk": 6, "mv": 5, "rng": 8, "def": 2, "kind": "hero" },
+    "helga": { "hp": 26, "atk": 5, "mv": 5, "rng": 3, "def": 3, "kind": "hero" },
+    "pyrok": { "hp": 24, "atk": 7, "mv": 4, "rng": 4, "def": 2, "kind": "hero" },
+    "pale-guard": { "hp": 20, "atk": 5, "mv": 4, "rng": 1, "def": 3, "kind": "guard" },
+    "shade": { "hp": 16, "atk": 6, "mv": 6, "rng": 1, "def": 1, "kind": "shade" },
+    "zereks": { "hp": 60, "atk": 9, "mv": 4, "rng": 2, "def": 6, "kind": "boss" }
+  },
+  "battles": [
+    {
+      "id": "battle-cauldron",
+      "name": "Бой 1 · Зал котла",
+      "grid": { "w": 20, "h": 10 },
+      "objective": "defeat",
+      "party": [
+        { "kind": "celestina", "x": 2, "y": 7 },
+        { "kind": "tan", "x": 3, "y": 8 },
+        { "kind": "bronn", "x": 2, "y": 8 },
+        { "kind": "lars", "x": 3, "y": 7 }
+      ],
+      "enemies": [
+        { "kind": "pale-guard", "x": 14, "y": 4 },
+        { "kind": "shade", "x": 16, "y": 5 },
+        { "kind": "pale-guard", "x": 15, "y": 6 }
+      ],
+      "onVictory": {
+        "effects": { "unity": 1, "faith": 1 },
+        "flags": ["battle_cauldron_won"]
+      },
+      "onDefeat": {
+        "effects": { "frost": 1 },
+        "flags": ["battle_cauldron_lost"]
+      }
+    },
+    {
+      "id": "battle-reagent",
+      "name": "Бой 3 · Последний реагент",
+      "grid": { "w": 20, "h": 10 },
+      "objective": "capture",
+      "party": [
+        { "kind": "celestina", "x": 3, "y": 7 },
+        { "kind": "bronn", "x": 2, "y": 8 },
+        { "kind": "lars", "x": 4, "y": 7 },
+        { "kind": "helga", "x": 3, "y": 8 }
+      ],
+      "enemies": [
+        { "kind": "zereks", "x": 10, "y": 4 },
+        { "kind": "pale-guard", "x": 9, "y": 5 },
+        { "kind": "pale-guard", "x": 12, "y": 5 }
+      ],
+      "onVictory": {
+        "effects": { "faith": 2, "unity": 1 },
+        "flags": ["zereks_captured"]
+      },
+      "onDefeat": {
+        "effects": { "frost": 2 },
+        "flags": ["zereks_escaped"]
+      }
+    }
+  ]
+}

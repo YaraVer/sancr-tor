@@ -35,7 +35,9 @@ export class PreloadScene extends Phaser.Scene {
     const allowed = [
       'TitleScene',
       'ConsentScene',
+      'ParticipantCodeScene',
       'ModeSelectScene',
+      'MapScene',
       'PssFormScene',
       'StoryScene',
       'ResultsScene',

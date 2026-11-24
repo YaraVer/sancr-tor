@@ -1,6 +1,16 @@
 import Phaser from 'phaser';
+import type { UiStrings } from '../types/story';
+import { tr } from '../systems/ui';
+import { makeTextButton } from '../ui/buttons';
 
 export class ConsentScene extends Phaser.Scene {
+  private readOk = false;
+  private adultOk = false;
+  private errorText?: Phaser.GameObjects.Text;
+  private readLabel?: Phaser.GameObjects.Text;
+  private adultLabel?: Phaser.GameObjects.Text;
+  private ui?: UiStrings;
+
   constructor() {
     super('ConsentScene');
   }
@@ -8,49 +18,70 @@ export class ConsentScene extends Phaser.Scene {
   create(): void {
     const { width } = this.scale;
     this.cameras.main.setBackgroundColor('#0b0e12');
+    this.ui = this.cache.json.get('ui') as UiStrings | undefined;
+    this.readOk = false;
+    this.adultOk = false;
 
-    const title = 'Согласие и информация';
-    const body = [
-      'Это прототип нарративной сцены и психологического инструмента (PSS-10).',
-      '',
-      '• Прохождение: ~10–15 минут, 10 эпизодов с выборами.',
-      '• Сюжет связан с пунктами PSS-10 по внутренним меткам (скрыты от игрока).',
-      '• До старта выбирается режим: с PSS-10 (опрос до и после игры, логи и сохранение) или без тестирования.',
-      '• Стандартизированный опросник всегда вне сюжета; в режиме с тестированием он показывается дважды: до и после истории.',
-      '• Ответы и логи сохраняются только локально в этом браузере и никуда не отправляются.',
-      '• Участие добровольное. Вы можете прекратить прохождение в любой момент.',
-      '• Это не терапия и не медицинская диагностика.',
-    ].join('\n');
+    const s = (key: string, fallback: string) => this.ui ? tr(this.ui as unknown as Record<string, unknown>, `consent.${key}`) : fallback;
 
-    this.add.text(32, 24, title, {
+    this.add.text(32, 18, s('title', 'Согласие и информация'), {
       fontFamily: 'Georgia, serif',
-      fontSize: '22px',
+      fontSize: '20px',
       color: '#e6e1d5',
     });
 
-    this.add.text(32, 60, body, {
+    this.add.text(32, 50, s('body', ''), {
       fontFamily: 'Georgia, serif',
-      fontSize: '13px',
+      fontSize: '11px',
       color: '#cfc7b6',
       wordWrap: { width: width - 64 },
-      lineSpacing: 5,
+      lineSpacing: 2,
     });
 
-    const back = this.add.text(32, 320, '[ Назад ]', {
+    this.readLabel = this.add.text(32, 252, '', {
       fontFamily: 'Georgia, serif',
-      fontSize: '16px',
-      color: '#9aa6b2',
+      fontSize: '12px',
+      color: '#cfc7b6',
     }).setInteractive({ useHandCursor: true });
-    back.on('pointerdown', () => this.scene.start('TitleScene'));
-
-    const cont = this.add.text(width - 32, 320, '[ Продолжить ]', {
+    this.adultLabel = this.add.text(32, 274, '', {
       fontFamily: 'Georgia, serif',
-      fontSize: '16px',
-      color: '#d7c28a',
-    }).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+      fontSize: '12px',
+      color: '#cfc7b6',
+    }).setInteractive({ useHandCursor: true });
 
-    cont.on('pointerdown', () => {
-      this.scene.start('ModeSelectScene');
+    this.readLabel.on('pointerdown', () => {
+      this.readOk = !this.readOk;
+      this.renderChecks();
     });
+    this.adultLabel.on('pointerdown', () => {
+      this.adultOk = !this.adultOk;
+      this.renderChecks();
+    });
+    this.renderChecks();
+
+    this.errorText = this.add.text(32, 298, '', {
+      fontFamily: 'Georgia, serif',
+      fontSize: '11px',
+      color: '#d98a6a',
+    });
+
+    makeTextButton(this, 32, 326, s('back', '[ Назад ]'), () => this.scene.start('TitleScene'), {
+      fontSize: '14px',
+      color: '#9aa6b2',
+    });
+    makeTextButton(this, width - 32, 326, s('continue', '[ Продолжить ]'), () => {
+      if (!this.readOk || !this.adultOk) {
+        this.errorText?.setText(s('needBoth', 'Отметьте оба пункта, чтобы продолжить.'));
+        return;
+      }
+      this.scene.start('ParticipantCodeScene');
+    }, { originX: 1, fontSize: '14px' });
+  }
+
+  private renderChecks(): void {
+    const s = (key: string, fallback: string) => this.ui ? tr(this.ui as unknown as Record<string, unknown>, `consent.${key}`) : fallback;
+    if (this.readLabel) this.readLabel.setText(`${this.readOk ? '[x]' : '[ ]'} ${s('checkRead', 'Я прочитал(а) информацию')}`);
+    if (this.adultLabel) this.adultLabel.setText(`${this.adultOk ? '[x]' : '[ ]'} ${s('checkAdult', 'Мне исполнилось 18 лет')}`);
+    if (this.errorText) this.errorText.setText('');
   }
 }

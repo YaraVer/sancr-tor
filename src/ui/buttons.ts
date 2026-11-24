@@ -7,6 +7,7 @@ export interface TextButtonOptions {
   originX?: number;
   originY?: number;
   wordWrap?: number;
+  width?: number;
 }
 
 /** Однообразные текстовые кнопки для всех новых сцен (без внешних ассетов). */
@@ -26,6 +27,7 @@ export function makeTextButton(
     wordWrap: options.wordWrap ? { width: options.wordWrap } : undefined,
   });
   button.setOrigin(options.originX ?? 0, options.originY ?? 0);
+  if (options.width) button.setFixedSize(options.width, button.height);
   button.setInteractive({ useHandCursor: true });
   button.on('pointerover', () => button.setColor(options.hoverColor ?? '#fff4da'));
   button.on('pointerout', () => button.setColor(color));

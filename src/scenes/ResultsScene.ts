@@ -46,6 +46,7 @@ export class ResultsScene extends Phaser.Scene {
       saveRun({
         sessionId: run.sessionId,
         mode: run.mode,
+        participant: run.participantCode ?? '',
         startedAt: run.startedAt,
         endedAt: new Date().toISOString(),
         endingId: run.ending?.id ?? '',
@@ -59,6 +60,7 @@ export class ResultsScene extends Phaser.Scene {
         t: new Date().toISOString(),
         session: run.sessionId,
         event: 'session_end',
+        participant: run.participantCode ?? '',
         ending: run.ending?.id ?? '',
       });
     }

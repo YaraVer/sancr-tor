@@ -38,6 +38,10 @@ export interface StoryEpisode {
   mood?: string;
   beats: StoryBeat[];
   choice: StoryChoice;
+  /** Ключ проверки d20 из data/checks.json. */
+  check?: string;
+  /** Ключ боя из data/combat.json. */
+  encounter?: string;
 }
 
 export interface StoryData {
@@ -91,4 +95,52 @@ export interface TestRegistry {
   version: number;
   note?: string;
   questionnaires: TestRegistryEntry[];
+}
+
+/* Механики из prototype.html, перенесённые в веб-версию. */
+
+export interface CheckSpec {
+  id: string;
+  episode: string;
+  label: string;
+  mod: number;
+  dc: number;
+  onSuccess: { effects: Record<string, number>; flags: string[] };
+  onFailure: { effects: Record<string, number>; flags: string[] };
+}
+
+export interface ChecksData {
+  version: number;
+  checks: CheckSpec[];
+}
+
+export interface WorldMarker {
+  episode: string;
+  x: number;
+  y: number;
+}
+
+export interface WorldZone {
+  id: string;
+  name: string;
+  order: number;
+  palette: { floor: string; wall: string; marker: string };
+  map: string[];
+  spawn: { x: number; y: number };
+  markers: WorldMarker[];
+}
+
+export interface WorldData {
+  version: number;
+  zones: WorldZone[];
+}
+
+export interface UiStrings {
+  version: number;
+  consent: Record<string, string>;
+  code: Record<string, string>;
+  map: Record<string, string>;
+  check: Record<string, string>;
+  battle: Record<string, string>;
+  [section: string]: unknown;
 }

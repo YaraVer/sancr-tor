@@ -23,7 +23,7 @@ export class TitleScene extends Phaser.Scene {
       lineSpacing: 6,
     }).setOrigin(0.5);
 
-    const start = this.add.text(width / 2, 215, '[ Начать ]', {
+    const start = this.add.text(width / 2, 192, '[ Начать ]', {
       fontFamily: 'Georgia, serif',
       fontSize: '18px',
       color: '#d7c28a',
@@ -31,7 +31,15 @@ export class TitleScene extends Phaser.Scene {
 
     start.on('pointerdown', () => this.scene.start('ConsentScene'));
 
-    const preview = this.add.text(width / 2, 250, '[ Проверка спрайтов ]', {
+    const map = this.add.text(width / 2, 228, '[ Карта похода ]', {
+      fontFamily: 'Georgia, serif',
+      fontSize: '15px',
+      color: '#9aa6b2',
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+    map.on('pointerdown', () => this.scene.start('MapScene'));
+
+    const preview = this.add.text(width / 2, 264, '[ Проверка спрайтов ]', {
       fontFamily: 'Georgia, serif',
       fontSize: '13px',
       color: '#9aa6b2',
